@@ -8,6 +8,8 @@ TcpServer::TcpServer(){
     server_addr.sin_family = AF_INET;       // 协议族
     server_addr.sin_port = htons(PORT);    // 端口号
 }
+
+
 int TcpServer::createSocket(){
     // 创建一个socket连接，然后返回socket的标识符
     socket_id = socket(AF_INET, SOCK_STREAM, 0);  // 建立socket
@@ -22,17 +24,6 @@ int TcpServer::createSocket(){
     }
     return socket_id;
     /*
-    int listen_r = listen(socket_id, 100);
-    if(listen_r == -1){
-        // 日志记录
-        return;
-    }
-    connect_id = accept(socket_id, (struct sockaddr*)NULL, NULL);
-    if(connect_id == -1){
-        // 日志记录
-        std::cout << connect_id << std::endl;
-        return;
-    }
     char* buff = new char[4096];
     int n = recv(connect_id, buff, 4096, 0);
     buff[n] = '\n';
@@ -41,3 +32,24 @@ int TcpServer::createSocket(){
     close(socket_id);
     */
 }
+
+
+void TcpServer::startListen(void* (*func)(int)){
+    // 开始监听端口, num: 最大监听数，　func: 处理函数
+    // 每当接入一个新的连接，就将connect参数传递给处理函数，而自身继续监听
+    int listen_r = listen(this->socket_id, MAX_LISTEN_NUM);
+    if(listen_r == -1){
+        // 日志记录
+        return;
+    }
+    while(1){
+        int connect_id = accept(socket_id, (struct sockaddr*)NULL, NULL);
+        if(connect_id == -1){
+            // 日志记录
+            return;
+        }
+        func(connect_id);   // 转由处理函数处理
+    }
+}
+
+

@@ -12,6 +12,7 @@
 # include "log_sys.h"
 
 # define PORT 9999
+# define MAX_LISTEN_NUM 20
 
 class TcpServer{
     // 管理TCP服务端的连接
@@ -23,6 +24,8 @@ private:
 public:
     TcpServer();
     int createSocket();
+    void startListen(void* (*func)(int));
+    
 };
 
 # endif
