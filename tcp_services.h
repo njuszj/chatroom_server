@@ -17,15 +17,13 @@
 class TcpServer{
     // 管理TCP服务端的连接
 private:
-    Logger logger;
     int socket_id;  // socket 标识符, 由本机IP地址和端口号唯一确定，所以是唯一的
     // int connect_id; // connect 标识符，由服务端和客户端两组(IP, Port)确定，所以可以有很多个
     struct sockaddr_in server_addr;  // 表征服务端信息的结构体
 public:
+    Logger logger;
     TcpServer();
     int createSocket();
-    void startListen(void* (*func)(int));
-    
 };
 
 # endif

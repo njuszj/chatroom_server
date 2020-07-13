@@ -32,24 +32,3 @@ int TcpServer::createSocket(){
     close(socket_id);
     */
 }
-
-
-void TcpServer::startListen(void* (*func)(int)){
-    // 开始监听端口, num: 最大监听数，　func: 处理函数
-    // 每当接入一个新的连接，就将connect参数传递给处理函数，而自身继续监听
-    int listen_r = listen(this->socket_id, MAX_LISTEN_NUM);
-    if(listen_r == -1){
-        // 日志记录
-        return;
-    }
-    while(1){
-        int connect_id = accept(socket_id, (struct sockaddr*)NULL, NULL);
-        if(connect_id == -1){
-            // 日志记录
-            return;
-        }
-        func(connect_id);   // 转由处理函数处理
-    }
-}
-
-
