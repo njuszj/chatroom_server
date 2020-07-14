@@ -1,5 +1,7 @@
 # include "log_sys.h"
 
+Logger logger;
+
 Logger::Logger(){
     // 默认构造函数
     this->target = terminal;

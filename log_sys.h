@@ -3,15 +3,9 @@
 # ifndef LOG_SYS_H
 # define LOG_SYS_H
 
-# include <iostream>
-# include <fstream>
-# include <string>
-# include <time.h>
+# include "environment.h"
 # include "utilities.h"
 
-using std::string;
-using std::cout;
-using std::endl;
 using std::ios;
 
 class Logger{
