@@ -1,5 +1,11 @@
 # include "chatroom.h"
 
+ProcessArg::ProcessArg(int cid, int index, Chatroom* ct){
+    this->ct = ct;
+    this->index = index;
+    this->cid = cid;
+}
+
 Chatroom::Chatroom(){
     // 默认构造函数
     socket_id = tcp_manager.createSocket();
@@ -12,14 +18,11 @@ Chatroom::Chatroom(){
 Chatroom::~Chatroom(){
 }
 
-/*
-    close(connect_id);
-    close(socket_id);
-*/
 
 void* process(void* arg){
     pthread_detach(pthread_self());  // 防止线程阻塞
-    int cid = *((int*)arg);
+    ProcessArg* parg = (ProcessArg*)arg;
+    int cid = parg->cid;
     char* buff = new char[RECV_BUFFSIZE];     // 创建接收缓冲区
     string tmpinfo = string() + "新的线程启动, 编号: " + to_string(pthread_self()) + ", socket id: " + to_string(cid);
     logger.INFO(tmpinfo);
@@ -30,7 +33,14 @@ void* process(void* arg){
         if(n>=1 && buff[n-1] != '\n')
             buff[n] = '\n';  // 添加一个换行
         logger.INFO(string() + "收到消息: " + buff);
+        if(strcmp(buff, "Bye\n") == 0) break;
+        else cout << "数组内容: " << buff << endl;
     }
+    close(cid);
+    parg->ct->freeIndexs(parg->index);
+    logger.INFO(string() + "线程 " + to_string(pthread_self()) + " 已结束");
+    pthread_exit(NULL);
+    return NULL;
 }
 
 void Chatroom::startListen(){
@@ -47,12 +57,24 @@ void Chatroom::startListen(){
             return;
         }
         else {
+            if(s_indexs.empty()) {
+                logger.ERROR("连接已达上限!");
+                close(connect_id);
+            }
             int index = s_indexs.top(); // 取一个下标
             s_indexs.pop();
             connects[index] = connect_id;
-            int rt = pthread_create(&tids[index], NULL, process, (void*)(&connects[index]));  // 创建新的线程处理连接
+            ProcessArg arg(connect_id, index, this);  // 构造传入的参数
+            int rt = pthread_create(&tids[index], NULL, process, (void*)&arg);  // 创建新的线程处理连接
             if(rt)
                 logger.ERROR("Failed to create a new thread! ");
         }
     }
+}
+
+void Chatroom::freeIndexs(int index){
+    // 释放一个index
+    connects[index] = 0;
+    tids[index] = 0;
+    s_indexs.push(index);  // 放回可用栈中
 }
