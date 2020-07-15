@@ -4,6 +4,7 @@
 # include "environment.h"
 
 # define MAX_CONNECTED_CLIENT_NUM 100
+# define RECV_BUFFSIZE 4096
 
 extern Logger logger;
 

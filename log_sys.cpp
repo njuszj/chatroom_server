@@ -1,6 +1,6 @@
 # include "log_sys.h"
 
-Logger logger;
+Logger logger;   // 全局变量应该定义在这里而不是头文件
 
 Logger::Logger(){
     // 默认构造函数
@@ -26,6 +26,14 @@ Logger::Logger(log_target target, log_level level, string path){
     }
 
 void Logger::output(string text, log_level act_level){
+    int t = text.size();
+    if(t == 0) return;
+    else{
+        // 进行预处理，删去多余的回车换行
+        t-=1;
+        while(t>=0 && (text[t] == '\n' || text[t] == '\r')) t--;
+        text = text.substr(0, t+1);
+    }
     string prefix;
     if(act_level == debug) prefix = "[DEBUG]   ";
     else if(act_level == info) prefix = "[INFO]    ";

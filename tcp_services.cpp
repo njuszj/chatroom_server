@@ -23,12 +23,4 @@ int TcpServer::createSocket(){
         return -1;
     }
     return socket_id;
-    /*
-    char* buff = new char[4096];
-    int n = recv(connect_id, buff, 4096, 0);
-    buff[n] = '\n';
-    std::cout << buff << std::endl;
-    close(connect_id);
-    close(socket_id);
-    */
 }

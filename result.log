@@ -1,21 +1,5 @@
-[DEBUG]   2020-07-05 21:48:42 : What happend?
-[INFO]    2020-07-05 21:48:42 : This is good.
-[WARNING] 2020-07-05 21:48:42 : Yes...
-[ERROR]   2020-07-05 21:48:42 : IO Error!
-[DEBUG]   log_sys.cpp2020-07-05 21:52:44 : What happend?
-[INFO]    log_sys.cpp2020-07-05 21:52:44 : This is good.
-[WARNING] log_sys.cpp2020-07-05 21:52:44 : Yes...
-[ERROR]   log_sys.cpp2020-07-05 21:52:44 : IO Error!
-[DEBUG]   log_sys.cpp 2020-07-05 21:54:51 : What happend?
-[INFO]    log_sys.cpp 2020-07-05 21:54:51 : This is good.
-[WARNING] log_sys.cpp 2020-07-05 21:54:51 : Yes...
-[ERROR]   log_sys.cpp 2020-07-05 21:54:51 : IO Error!
-[DEBUG]   log_sys.cpp 2020-07-05 21:56:33 : What happend?
-[INFO]    log_sys.cpp 2020-07-05 21:56:33 : This is good.
-[WARNING] log_sys.cpp 2020-07-05 21:56:33 : Yes...
-[ERROR]   log_sys.cpp 2020-07-05 21:56:33 : IO Error!
-[Welcome] log_sys.cpp 2020-07-05 22:12:25 : === Start logging ===
-[DEBUG]   log_sys.cpp 2020-07-05 22:12:25 : What happend?
-[INFO]    log_sys.cpp 2020-07-05 22:12:25 : This is good.
-[WARNING] log_sys.cpp 2020-07-05 22:12:25 : Yes...
-[ERROR]   log_sys.cpp 2020-07-05 22:12:25 : IO Error!
+[Welcome] log_sys.cpp 2020-07-15 14:41:16 : === Start logging ===
+[DEBUG]   log_sys.cpp 2020-07-15 14:41:16 : What happend?
+[INFO]    log_sys.cpp 2020-07-15 14:41:16 : This is good.
+[WARNING] log_sys.cpp 2020-07-15 14:41:16 : Yes...
+[ERROR]   log_sys.cpp 2020-07-15 14:41:16 : IO Error!
