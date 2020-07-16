@@ -16,6 +16,7 @@ Chatroom::Chatroom(){
 }
 
 Chatroom::~Chatroom(){
+
 }
 
 
@@ -29,12 +30,11 @@ void* process(void* arg){
 
     while(1){
         memset(buff, 0, RECV_BUFFSIZE);
-        int n = recv(cid, buff, 4096, 0);
-        if(n>=1 && buff[n-1] != '\n')
-            buff[n] = '\n';  // 添加一个换行
+        int n = recv(cid, buff, 4096, 0);  // buff会自动添加一个\0结束标志
         logger.INFO(string() + "收到消息: " + buff);
         if(strcmp(buff, "Bye\n") == 0) break;
-        else cout << "数组内容: " << buff << endl;
+        for(int i=0; i<n; i++) cout << i << " " << buff[i] << " ";
+        cout << endl;
     }
     close(cid);
     parg->ct->freeIndexs(parg->index);
