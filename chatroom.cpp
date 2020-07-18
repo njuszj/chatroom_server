@@ -22,7 +22,7 @@ Chatroom::~Chatroom(){
 
 void* process(void* arg){
     // 处理函数，负责接收每一个客户发来的消息
-    pthread_detach(pthread_self());  // 防止线程阻塞
+    pthread_detach(pthread_self());       // 防止线程阻塞
     ProcessArg* parg = (ProcessArg*)arg;  // 传入参数
     Chatroom* server = parg->ct;
     int cid = parg->cid;  // connect socket id
@@ -33,7 +33,8 @@ void* process(void* arg){
         memset(buff, 0, RECV_BUFFSIZE);
         int n = recv(cid, buff, RECV_BUFFSIZE, 0);  // buff会自动添加一个\0结束标志
         logger.INFO(string() + "收到消息: " + buff);
-        if(strncmp(buff, "Bye", 3) == 0) break;
+        if(strncmp(buff, "cmd@bye", 7) == 0) break;
+        if(strncmp(buff, "cmd@login", 9) == 0) cout << "用户登录" << endl;
         else if(n > 0) server->broadcast(buff);
     }
     close(cid);
@@ -51,6 +52,7 @@ void Chatroom::startListen(){
         return;
     }
     while(1){
+        // 循环接收一个新的TCP连接，建立新的线程处理连接
         int connect_id = accept(socket_id, (struct sockaddr*)NULL, NULL);
         if(connect_id == -1){
             logger.ERROR("Failed to accept connect request! ");

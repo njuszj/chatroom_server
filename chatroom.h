@@ -20,8 +20,8 @@ private:
     TcpServer tcp_manager;
     stack<int> free_indexs;  // 使用栈管理可用的下标
     set<int> active_indexs;  // 活跃的下标
-    int connects[MAX_CONNECTED_CLIENT_NUM];
-    pthread_t tids[MAX_CONNECTED_CLIENT_NUM];
+    int connects[MAX_CONNECTED_CLIENT_NUM];   // socket_id 数组
+    pthread_t tids[MAX_CONNECTED_CLIENT_NUM]; // tid数组
     int socket_id;
 };
 
