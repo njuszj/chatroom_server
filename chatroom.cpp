@@ -30,11 +30,18 @@ void* process(void* arg){
     string tmpinfo = string() + "新的线程启动, 编号: " + to_string(pthread_self()) + ", socket id: " + to_string(cid);
     logger.INFO(tmpinfo);
     while(1){
+        // 循环接受消息，并处理消息
         memset(buff, 0, RECV_BUFFSIZE);
         int n = recv(cid, buff, RECV_BUFFSIZE, 0);  // buff会自动添加一个\0结束标志
         logger.INFO(string() + "收到消息: " + buff);
         if(strncmp(buff, "cmd@bye", 7) == 0) break;
-        if(strncmp(buff, "cmd@login", 9) == 0) cout << "用户登录" << endl;
+        else if(strncmp(buff, "cmd@login", 9) == 0) {
+            // 进入登录模块
+            User user = server->login(cid);
+            if(user.isValid()){
+                server->broadcast("换迎新用户登录");
+            }
+        }
         else if(n > 0) server->broadcast(buff);
     }
     close(cid);
@@ -75,17 +82,55 @@ void Chatroom::startListen(){
     }
 }
 
-void Chatroom::broadcast(const char* cstring){
+User Chatroom::login(int cid){
+    // 用户尝试登录
+    // 接收帐号信息
+    User user;
+    char* account = new char[SHORT_BUFFSIZE];     // 为帐号创建接收缓冲区
+    char* passwd = new char[SHORT_BUFFSIZE];
+    sendMessage(cid, "ACCOUNT: ");
+    memset(account, 0, SHORT_BUFFSIZE);
+    int r1 = recv(cid, account, SHORT_BUFFSIZE, 0);
+    if(r1>=0)
+        logger.INFO(string() + "登录中，收到帐号: " + account);
+    else{
+        logger.INFO("用户帐号接收错误");
+    }
+    sendMessage(cid, "PASSWORD: ");
+    memset(passwd, 0, SHORT_BUFFSIZE);
+    int r2 = recv(cid, passwd, SHORT_BUFFSIZE, 0);
+    if(r2>=0)
+        logger.INFO(string()+"收到用户发来的密码");
+    else{
+        logger.INFO("用户密码接收错误");
+    }
+
+    int digital_account = atoi(account);
+    bool r = user.verify(digital_account, passwd);
+    if(r){
+        logger.INFO(string()+"用户成功登录");
+        return user;
+    }
+    else{
+        return User();
+    }
+}
+
+void Chatroom::broadcast(const char* message){
     set<int>::iterator itor = active_indexs.begin();
-    logger.INFO(string()+"开始向所有在线用户广播一条消息: "+cstring);
+    logger.INFO(string()+"开始向所有在线用户广播一条消息: "+message);
     for(; itor != active_indexs.end(); itor++){
         int cid = connects[*itor];
-        int r = send(cid, cstring, strlen(cstring), 0);
-        if(r>=0)
-            logger.INFO(string()+"向 "+to_string(cid)+" 广播了一条消息");
-        else
-            logger.ERROR("广播错误!");
+        sendMessage(cid, message);
     }
+}
+
+void Chatroom::sendMessage(int cid, const char* message){
+    int r = send(cid, message, strlen(message), 0);
+    if(r>=0)
+       logger.INFO(string()+"向 "+to_string(cid)+" 发了一条消息: "+message);
+    else
+        logger.ERROR("发送错误!");
 }
 
 void Chatroom::freeIndexs(int index){

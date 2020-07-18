@@ -14,7 +14,8 @@ public:
     User():account(0), nickname(""){};
     ~User(){};
 public:
-    bool verify(int account, string password); // 验证密码是否正确
+    bool verify(int account, string passwd); // 验证密码是否正确
+    bool isValid();
 };
 
 # endif

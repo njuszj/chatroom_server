@@ -1,10 +1,12 @@
 # ifndef CHATROOM_H
 # define CHATROOM_H
 # include "tcp_services.h"
+# include "user.h"
 # include "environment.h"
 
 # define MAX_CONNECTED_CLIENT_NUM 100
 # define RECV_BUFFSIZE 4096
+# define SHORT_BUFFSIZE 128
 
 extern Logger logger;
 
@@ -14,8 +16,10 @@ public:
     Chatroom();// 构造函数
     ~Chatroom();// 析构函数
     void startListen();//开始监听端口接受请求
-    void freeIndexs(int index);
-    void broadcast(const char*);
+    void freeIndexs(int index);  // 释放一个资源
+    void broadcast(const char*); // 向所有活跃连接广播一条消息
+    void sendMessage(int cid, const char* message);       // 向一个特定的tcp连接写入消息
+    User login(int cid);  // 用户登录，返回一个用户对象
 private:
     TcpServer tcp_manager;
     stack<int> free_indexs;  // 使用栈管理可用的下标
