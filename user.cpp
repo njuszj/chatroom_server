@@ -10,3 +10,20 @@ bool User::verify(int account, string passwd){
 bool User::isValid(){
     return valid;
 }
+
+User& User::operator=(const User& rst){
+    this->account = rst.account;
+    this->nickname = rst.nickname;
+    this->valid = rst.valid;
+    return *this;
+}
+
+bool User::operator==(const User& rst){
+    if(this->account == rst.account) return true;
+    else return false;
+}
+
+bool User::operator<(const User& rst){
+    if(this->account < rst.account) return true;
+    else return false;
+}

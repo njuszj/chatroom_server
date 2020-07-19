@@ -19,6 +19,9 @@ Chatroom::~Chatroom(){
 
 }
 
+void Chatroom::addUser(const User& user){
+    this->active_users.insert(user);
+}
 
 void* process(void* arg){
     // 处理函数，负责接收每一个客户发来的消息
@@ -27,6 +30,7 @@ void* process(void* arg){
     Chatroom* server = parg->ct;
     int cid = parg->cid;  // connect socket id
     char* buff = new char[RECV_BUFFSIZE];     // 创建接收缓冲区
+    User* user = new User();       // 为这个连接绑定一个用户
     string tmpinfo = string() + "新的线程启动, 编号: " + to_string(pthread_self()) + ", socket id: " + to_string(cid);
     logger.INFO(tmpinfo);
     while(1){
@@ -36,9 +40,10 @@ void* process(void* arg){
         logger.INFO(string() + "收到消息: " + buff);
         if(strncmp(buff, "cmd@bye", 7) == 0) break;
         else if(strncmp(buff, "cmd@login", 9) == 0) {
-            // 进入登录模块
-            User user = server->login(cid);
-            if(user.isValid()){
+            // 进入用户登录模块
+            *user = server->login(cid);
+            if(user->isValid()){
+                server->addUser(*user);
                 server->broadcast("换迎新用户登录");
             }
         }
@@ -137,6 +142,17 @@ void Chatroom::freeIndexs(int index){
     // 释放一个index
     connects[index] = 0;
     tids[index] = 0;
-    active_indexs.erase(index);  // 从活跃集合中移除
+    if(active_indexs.find(index) != active_indexs.end())
+        active_indexs.erase(index);  // 从活跃集合中移除
     free_indexs.push(index);  // 放回可用栈中
+}
+
+void Chatroom::freeUsers(const User& user){
+    set<User>::iterator itor = active_users.find(user);
+    if(itor != active_users.end()){
+        // 释放User占用的资源
+        delete (User*)(&(*itor));
+        this->active_users.erase(user);
+    }
+    logger.INFO("用户下线");
 }

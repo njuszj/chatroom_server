@@ -14,6 +14,9 @@ public:
     User():account(0), nickname(""){};
     ~User(){};
 public:
+    User& operator=(const User&);
+    bool operator==(const User&);
+    bool operator<(const User&);
     bool verify(int account, string passwd); // 验证密码是否正确
     bool isValid();
 };
