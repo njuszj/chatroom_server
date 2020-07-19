@@ -44,10 +44,10 @@ void* process(void* arg){
             *user = server->login(cid);
             if(user->isValid()){
                 server->addUser(*user);
-                server->broadcast("换迎新用户登录");
+                server->broadcast(string()+"换迎用户 "+user->getNickname()+" 登录", -1);
             }
         }
-        else if(n > 0) server->broadcast(buff);
+        else if(n > 0) server->broadcast(buff, cid);
     }
     close(cid);
     server->freeIndexs(parg->index);
@@ -117,21 +117,26 @@ User Chatroom::login(int cid){
         return user;
     }
     else{
+        sendMessage(cid, "ERROR LOGIN");
+        logger.INFO(string()+"用户登录失败");
         return User();
     }
 }
 
-void Chatroom::broadcast(const char* message){
+void Chatroom::broadcast(string message, int exclude){
+    // 向所有TCP连接广播一条消息，除了exclude
     set<int>::iterator itor = active_indexs.begin();
     logger.INFO(string()+"开始向所有在线用户广播一条消息: "+message);
     for(; itor != active_indexs.end(); itor++){
         int cid = connects[*itor];
-        sendMessage(cid, message);
+        if(cid != exclude)
+            sendMessage(cid, message);
     }
 }
 
-void Chatroom::sendMessage(int cid, const char* message){
-    int r = send(cid, message, strlen(message), 0);
+void Chatroom::sendMessage(int cid, string message){
+    // 向一个TCP连接发送一条消息
+    int r = send(cid, message.data(), message.size(), 0);
     if(r>=0)
        logger.INFO(string()+"向 "+to_string(cid)+" 发了一条消息: "+message);
     else

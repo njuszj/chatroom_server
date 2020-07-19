@@ -4,7 +4,6 @@
 # define USER_H
 # include "environment.h"
 
-
 class User{
 private:
     int account;     // 帐号
@@ -16,9 +15,12 @@ public:
 public:
     User& operator=(const User&);
     bool operator==(const User&);
-    bool operator<(const User&);
+    bool operator<(const User&) const;
     bool verify(int account, string passwd); // 验证密码是否正确
     bool isValid();
+    string getNickname();
 };
+
+// bool operator<(const User&, const User&);
 
 # endif

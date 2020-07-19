@@ -23,7 +23,11 @@ bool User::operator==(const User& rst){
     else return false;
 }
 
-bool User::operator<(const User& rst){
+bool User::operator<(const User& rst) const{
     if(this->account < rst.account) return true;
     else return false;
+}
+
+string User::getNickname(){
+    return nickname;
 }
