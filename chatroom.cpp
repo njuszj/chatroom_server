@@ -19,11 +19,10 @@ Chatroom::~Chatroom(){
 
 }
 
-void Chatroom::addUser(const User& user, int cid){
-    logger.INFO(string() + "用户: "+user.getNickname()+"登录，连接id是: "+to_string(cid));
+void Chatroom::addUser(User* user, int cid){
+    logger.INFO(string() + "用户: "+user->getNickname()+"登录，连接id是: "+to_string(cid));
     active_users.insert(user);
     cid_to_user[cid] = user;
-    user_to_cid[user.getAccount()] = cid;
 }
 
 void* process(void* arg){
@@ -119,13 +118,13 @@ User Chatroom::login(int cid){
     bool r = user->verify(digital_account, passwd);
     if(r){
         logger.INFO(string()+"用户成功登录");
-        this->addUser(*user, cid);
+        this->addUser(user, cid);
         return *user;
     }
     else{
         sendMessage(cid, "ERROR LOGIN");
         logger.INFO(string()+"用户登录失败");
-        free(user);  // 释放资源
+        delete user;  // 释放资源
         return User();
     }
 }
