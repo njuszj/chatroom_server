@@ -7,7 +7,7 @@ bool User::verify(int account, string passwd){
     return true;
 }
 
-bool User::isValid(){
+bool User::isValid() const{
     return valid;
 }
 
@@ -28,6 +28,10 @@ bool User::operator<(const User& rst) const{
     else return false;
 }
 
-string User::getNickname(){
+string User::getNickname() const{
     return nickname;
+}
+
+int User::getAccount() const{
+    return account;
 }

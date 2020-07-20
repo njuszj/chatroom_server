@@ -19,8 +19,11 @@ Chatroom::~Chatroom(){
 
 }
 
-void Chatroom::addUser(const User& user){
-    this->active_users.insert(user);
+void Chatroom::addUser(const User& user, int cid){
+    logger.INFO(string() + "用户: "+user.getNickname()+"登录，连接id是: "+to_string(cid));
+    active_users.insert(user);
+    cid_to_user[cid] = user;
+    user_to_cid[user.getAccount()] = cid;
 }
 
 void* process(void* arg){
@@ -43,10 +46,12 @@ void* process(void* arg){
             // 进入用户登录模块
             *user = server->login(cid);
             if(user->isValid()){
-                server->addUser(*user);
                 server->broadcast(string()+"换迎用户 "+user->getNickname()+" 登录", -1);
             }
         }
+        // else if(strncmp(buff, "cmd@", 9) == 0){
+
+        // }
         else if(n > 0) server->broadcast(buff, cid);
     }
     close(cid);
@@ -90,7 +95,7 @@ void Chatroom::startListen(){
 User Chatroom::login(int cid){
     // 用户尝试登录
     // 接收帐号信息
-    User user;
+    User *user = new User();
     char* account = new char[SHORT_BUFFSIZE];     // 为帐号创建接收缓冲区
     char* passwd = new char[SHORT_BUFFSIZE];
     sendMessage(cid, "ACCOUNT: ");
@@ -111,14 +116,16 @@ User Chatroom::login(int cid){
     }
 
     int digital_account = atoi(account);
-    bool r = user.verify(digital_account, passwd);
+    bool r = user->verify(digital_account, passwd);
     if(r){
         logger.INFO(string()+"用户成功登录");
-        return user;
+        this->addUser(*user, cid);
+        return *user;
     }
     else{
         sendMessage(cid, "ERROR LOGIN");
         logger.INFO(string()+"用户登录失败");
+        free(user);  // 释放资源
         return User();
     }
 }

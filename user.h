@@ -17,8 +17,9 @@ public:
     bool operator==(const User&);
     bool operator<(const User&) const;
     bool verify(int account, string passwd); // 验证密码是否正确
-    bool isValid();
-    string getNickname();
+    bool isValid() const;
+    string getNickname() const;
+    int getAccount() const;
 };
 
 // bool operator<(const User&, const User&);
