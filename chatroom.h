@@ -27,15 +27,16 @@ public:
     void freeUsers(const User&); // 一个用户离线
     void broadcast(string message, int exclude); // 向所有活跃连接广播一条消息
     void sendMessage(int cid, string message);       // 向一个特定的tcp连接写入消息
-    void addUser(User*, int);  // 添加一个活跃用户
+    void addUser(const User&, int);  // 添加一个活跃用户
     void cmdProcess(const char*, int);  // 命令处理
-    User login(int cid);  // 用户登录，返回一个用户对象
+    void login(int cid);  // 用户登录，返回一个用户对象
 private:
     TcpServer tcp_manager;
     stack<int> free_indexs;  // 使用栈管理可用的下标
     set<int> active_indexs;  // 活跃的下标
-    set<User*> active_users;  // 在线用户
-    map<int, User*> cid_to_user; // 标记一个TCP连接是否是一个认证的用户, 一个TCP连接只有一个用户
+    set<User> active_users;  // 在线用户
+    map<int, int> cid_to_user; // 标记一个TCP连接是否是一个认证的用户, 一个TCP连接只有一个用户
+    map<int, int> user_to_cid; // 一个用户对应的TCP连接，可能不止一个，但是暂时只取一个
     int connects[MAX_CONNECTED_CLIENT_NUM];   // socket_id 数组
     pthread_t tids[MAX_CONNECTED_CLIENT_NUM]; // tid数组
     int socket_id;

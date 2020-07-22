@@ -1,10 +1,9 @@
 # include "user.h"
 
-bool User::verify(int account, string passwd){
-    this->account = account;
-    this->nickname = "Mr.Rand";
-    this->valid = true;
-    return true;
+User verify(int account, string passwd){
+    User user(account, "Mr.rand");
+    user.active();
+    return user;
 }
 
 bool User::isValid() const{
@@ -34,4 +33,8 @@ string User::getNickname() const{
 
 int User::getAccount() const{
     return account;
+}
+
+void User::active(){
+    this->valid = true;
 }

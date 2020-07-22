@@ -19,10 +19,11 @@ Chatroom::~Chatroom(){
 
 }
 
-void Chatroom::addUser(User* user, int cid){
-    logger.INFO(string() + "用户: "+user->getNickname()+"登录，连接id是: "+to_string(cid));
+void Chatroom::addUser(const User& user, int cid){
+    logger.INFO(string() + "用户: "+user.getNickname()+"登录，连接id是: "+to_string(cid));
     active_users.insert(user);
-    cid_to_user[cid] = user;
+    cid_to_user[cid] = user.getAccount();
+    user_to_cid[user.getAccount()] = cid;
 }
 
 void* process(void* arg){
@@ -32,7 +33,6 @@ void* process(void* arg){
     Chatroom* server = parg->ct;
     int cid = parg->cid;  // connect socket id
     char* buff = new char[RECV_BUFFSIZE];     // 创建接收缓冲区
-    User* user = new User();       // 为这个连接绑定一个用户
     string tmpinfo = string() + "新的线程启动, 编号: " + to_string(pthread_self()) + ", socket id: " + to_string(cid);
     logger.INFO(tmpinfo);
     while(1){
@@ -40,16 +40,15 @@ void* process(void* arg){
         memset(buff, 0, RECV_BUFFSIZE);
         int n = recv(cid, buff, RECV_BUFFSIZE, 0);  // buff会自动添加一个\0结束标志
         logger.INFO(string() + "收到消息: " + buff);
-        if(strncmp(buff, "cmd@bye", 7) == 0) break;
-        else if(strncmp(buff, "cmd@login", 9) == 0) {
-            // 进入用户登录模块
-            *user = server->login(cid);
-            if(user->isValid()){
-                server->broadcast(string()+"换迎用户 "+user->getNickname()+" 登录", -1);
+        if(strncmp(buff, "cmd@", 4) == 0){
+            // 命令处理模块
+            if(strncmp(buff, "cmd@bye", 7) == 0) break;
+            else if(strncmp(buff, "cmd@login", 9) == 0) {
+                // 进入用户登录模块
+                server->login(cid);
             }
         }
         // else if(strncmp(buff, "cmd@", 9) == 0){
-
         // }
         else if(n > 0) server->broadcast(buff, cid);
     }
@@ -91,7 +90,7 @@ void Chatroom::startListen(){
     }
 }
 
-User Chatroom::login(int cid){
+void Chatroom::login(int cid){
     // 用户尝试登录
     // 接收帐号信息
     User *user = new User();
@@ -115,17 +114,18 @@ User Chatroom::login(int cid){
     }
 
     int digital_account = atoi(account);
-    bool r = user->verify(digital_account, passwd);
-    if(r){
+    *user = verify(digital_account, passwd);
+    if(user->isValid()){
         logger.INFO(string()+"用户成功登录");
-        this->addUser(user, cid);
-        return *user;
+        sendMessage(cid, "Welcome to chatroom!");
+        this->addUser(*user, cid);
+        return;
     }
     else{
         sendMessage(cid, "ERROR LOGIN");
         logger.INFO(string()+"用户登录失败");
         delete user;  // 释放资源
-        return User();
+        return;
     }
 }
 
@@ -151,6 +151,7 @@ void Chatroom::sendMessage(int cid, string message){
 
 void Chatroom::freeIndexs(int index){
     // 释放一个index
+    cid_to_user.erase(connects[index]);
     connects[index] = 0;
     tids[index] = 0;
     if(active_indexs.find(index) != active_indexs.end())
@@ -164,6 +165,7 @@ void Chatroom::freeUsers(const User& user){
         // 释放User占用的资源
         delete (User*)(&(*itor));
         this->active_users.erase(user);
+        user_to_cid.erase(user.getAccount());
     }
     logger.INFO("用户下线");
 }
