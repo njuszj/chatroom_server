@@ -19,6 +19,14 @@ Chatroom::~Chatroom(){
 
 }
 
+void Chatroom::cmdProcess(const char* buff, int cid){
+    // 命令处理模块
+    if(strncmp(buff, "cmd@login", 9) == 0){
+        // 进入用户登录模块
+        m_login(cid);
+    }
+}
+
 void Chatroom::addUser(const User& user, int cid){
     logger.INFO(string() + "用户: "+user.getNickname()+"登录，连接id是: "+to_string(cid));
     active_users.insert(user);
@@ -41,15 +49,10 @@ void* process(void* arg){
         int n = recv(cid, buff, RECV_BUFFSIZE, 0);  // buff会自动添加一个\0结束标志
         logger.INFO(string() + "收到消息: " + buff);
         if(strncmp(buff, "cmd@", 4) == 0){
-            // 命令处理模块
             if(strncmp(buff, "cmd@bye", 7) == 0) break;
-            else if(strncmp(buff, "cmd@login", 9) == 0) {
-                // 进入用户登录模块
-                server->login(cid);
-            }
+            // 进入命令处理模块
+            else server->cmdProcess(buff, cid);
         }
-        // else if(strncmp(buff, "cmd@", 9) == 0){
-        // }
         else if(n > 0) server->broadcast(buff, cid);
     }
     close(cid);

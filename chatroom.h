@@ -29,8 +29,8 @@ public:
     void sendMessage(int cid, string message);       // 向一个特定的tcp连接写入消息
     void addUser(const User&, int);  // 添加一个活跃用户
     void cmdProcess(const char*, int);  // 命令处理
-    void login(int cid);  // 用户登录，返回一个用户对象
 private:
+    void m_login(int cid);  // 用户登录，返回一个用户对象
     TcpServer tcp_manager;
     stack<int> free_indexs;  // 使用栈管理可用的下标
     set<int> active_indexs;  // 活跃的下标
