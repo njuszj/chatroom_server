@@ -25,6 +25,10 @@ void Chatroom::cmdProcess(const char* buff, int cid){
         // 进入用户登录模块
         m_login(cid);
     }
+    else if(strncmp(buff, "cmd@register", 12) == 0){
+        // 进入用户注册模块
+    }
+    else return;
 }
 
 void Chatroom::addUser(const User& user, int cid){
@@ -93,7 +97,7 @@ void Chatroom::startListen(){
     }
 }
 
-void Chatroom::login(int cid){
+void Chatroom::m_login(int cid){
     // 用户尝试登录
     // 接收帐号信息
     User *user = new User();
@@ -145,6 +149,7 @@ void Chatroom::broadcast(string message, int exclude){
 
 void Chatroom::sendMessage(int cid, string message){
     // 向一个TCP连接发送一条消息
+    if(cid<=0) return;
     int r = send(cid, message.data(), message.size(), 0);
     if(r>=0)
        logger.INFO(string()+"向 "+to_string(cid)+" 发了一条消息: "+message);
@@ -171,4 +176,16 @@ void Chatroom::freeUsers(const User& user){
         user_to_cid.erase(user.getAccount());
     }
     logger.INFO("用户下线");
+}
+
+int Chatroom::m_getUserCid(int id){
+    if(user_to_cid.find(id) != user_to_cid.end()){
+        return user_to_cid[id];
+    }
+    else return 0;
+}
+
+void Chatroom::sendMessageToUser(int id, string message){
+    int cid = m_getUserCid(id);
+    sendMessage(cid, message);
 }

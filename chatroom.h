@@ -27,10 +27,12 @@ public:
     void freeUsers(const User&); // 一个用户离线
     void broadcast(string message, int exclude); // 向所有活跃连接广播一条消息
     void sendMessage(int cid, string message);       // 向一个特定的tcp连接写入消息
+    void sendMessageToUser(int , string); // 向一个注册的用户发送消息
     void addUser(const User&, int);  // 添加一个活跃用户
     void cmdProcess(const char*, int);  // 命令处理
 private:
     void m_login(int cid);  // 用户登录，返回一个用户对象
+    int m_getUserCid(int id); // 获取用户的TCP连接号
     TcpServer tcp_manager;
     stack<int> free_indexs;  // 使用栈管理可用的下标
     set<int> active_indexs;  // 活跃的下标
