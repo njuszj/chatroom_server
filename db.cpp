@@ -24,6 +24,7 @@ int DBManager::execute(const char* sql){
 }
 
 void ChatroomDBManager::createOriginTables(){
+    // 建表语句
     execute("CREATE TABLE User( \
         id       INT PRIMARY KEY NOT NULL, \
         account  INT             NOT NULL, \
