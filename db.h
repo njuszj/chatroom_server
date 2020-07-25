@@ -11,16 +11,18 @@ class DBManager{
 public:
     DBManager():db_ptr(NULL){};
     DBManager(const char* filename);
-    ~DBManager();
-
+    virtual ~DBManager();
     int execute(const char* sql);
 protected:
     Logger logger;  // 日志记录
-private:
     sqlite3* db_ptr; // 数据库文件指针
 };
 
 class ChatroomDBManager: public DBManager{
+public:
+    ChatroomDBManager(const char* filename):DBManager(filename){};
+    virtual ~ChatroomDBManager();
+public:
     
 };
 
