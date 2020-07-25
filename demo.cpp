@@ -2,6 +2,7 @@
 # include "utilities.h"
 # include "log_sys.h"
 # include "chatroom.h"
+# include "db.h"
 
 using namespace std;
 
@@ -13,7 +14,13 @@ void logger_test(){
     logger.ERROR("IO Error!");
 }
 
+void sql_test(){
+    ChatroomDBManager cdb("chatroom.db");
+    cdb.createOriginTables();
+}
+
 int main(){
-    Chatroom se;
-    se.startListen();
+    // Chatroom se;
+    // se.startListen();
+    sql_test();
 }

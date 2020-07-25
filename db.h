@@ -20,10 +20,11 @@ protected:
 
 class ChatroomDBManager: public DBManager{
 public:
+    ChatroomDBManager():DBManager(){};
     ChatroomDBManager(const char* filename):DBManager(filename){};
-    virtual ~ChatroomDBManager();
+    virtual ~ChatroomDBManager(){};
 public:
-    
+    void createOriginTables();
 };
 
 # endif

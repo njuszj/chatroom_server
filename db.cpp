@@ -14,6 +14,19 @@ DBManager::~DBManager(){
 }
 
 int DBManager::execute(const char* sql){
-    int r = sqlite3_exec(db_ptr, sql, NULL, NULL, NULL);
+    char *err_message = new char[100];
+    int r = sqlite3_exec(db_ptr, sql, NULL, NULL, &err_message);
+    if(r != SQLITE_OK){
+        logger.ERROR("执行SQL语句出错!");
+        logger.ERROR(err_message);
+    }
     return r;
+}
+
+void ChatroomDBManager::createOriginTables(){
+    execute("CREATE TABLE User( \
+        id       INT PRIMARY KEY NOT NULL, \
+        account  INT             NOT NULL, \
+        nickname CHAR(100)       NOT NULL, \
+        password CHAR(128)       NOT NULL);");
 }
