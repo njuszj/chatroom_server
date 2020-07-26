@@ -7,5 +7,8 @@ demo_test:
 sql_test:
 	g++ demo.cpp db.cpp log_sys.cpp user.cpp utilities.cpp -lsqlite3 -o demo
 	./demo
+hash_test:
+	g++ demo.cpp -o demo
+	./demo
 clean:
-	rm a.out result.log 
+	rm a.out result.log demo

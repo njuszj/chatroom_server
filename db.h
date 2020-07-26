@@ -27,4 +27,14 @@ public:
     void createOriginTables();
 };
 
+class UserDBManager: public DBManager{
+public:
+    UserDBManager():DBManager(){};
+    UserDBManager(const char* filename):DBManager(filename){};
+    virtual ~UserDBManager(){};
+public:
+    bool insertUser(int account, string nickname, string password);  // 新增用户
+    bool modifyPassword(int account, string password); // 修改用户密码
+};
+
 # endif
