@@ -8,6 +8,10 @@
 # include <tr1/functional>
 # include <sqlite3.h>
 
+extern Logger logger;
+
+enum user_verify_tag{verify_ok, password_error, account_error};
+
 class DBManager{
 public:
     DBManager():db_ptr(NULL){};
@@ -42,6 +46,6 @@ public:
     bool deleteUser(int account, string password);     // 删除用户
 };
 
-int user_verify_callback(void *arg_ptr, int argc, char **argv, char **col_names); // 验证用户的回调函数
+int user_verify_callback(void *tag, int argc, char **argv, char **col_names); // 验证用户的回调函数
 
 # endif

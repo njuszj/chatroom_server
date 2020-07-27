@@ -40,3 +40,13 @@ void ChatroomDBManager::createOriginTables(){
         nickname CHAR(100)       NOT NULL, \
         password CHAR(128)       NOT NULL);");
 }
+
+int user_verify_callback(void *verify_tag, int argc, char **argv, char **col_names){
+    user_verify_tag tag = *(user_verify_tag*)tag;
+    logger.DEBUG("进入用户验证的回调函数");
+    if(argc == 0)
+        tag = account_error;
+    else{
+        
+    }
+}
