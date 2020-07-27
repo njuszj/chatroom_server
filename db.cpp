@@ -13,6 +13,15 @@ DBManager::~DBManager(){
     sqlite3_close(db_ptr);
 }
 
+string UserDBManager::hash(string password) const{
+    return to_string(std::tr1::hash<std::string>()(password));
+}
+
+bool UserDBManager::verify(int account, string password) const{
+    password = hash(password);
+    const char sql[100] = "SELECT password from user where account"
+}
+
 int DBManager::execute(const char* sql){
     char *err_message = new char[100];
     int r = sqlite3_exec(db_ptr, sql, NULL, NULL, &err_message);

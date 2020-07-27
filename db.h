@@ -5,6 +5,7 @@
 
 # include "environment.h"
 # include "log_sys.h"
+# include <tr1/functional>
 # include <sqlite3.h>
 
 class DBManager{
@@ -32,9 +33,15 @@ public:
     UserDBManager():DBManager(){};
     UserDBManager(const char* filename):DBManager(filename){};
     virtual ~UserDBManager(){};
+
+    string hash(string password) const;     // 对密码进行哈希处理，避免明文储存
+    bool verify(int account, string password) const; // 验证用户密码
 public:
     bool insertUser(int account, string nickname, string password);  // 新增用户
     bool modifyPassword(int account, string password); // 修改用户密码
+    bool deleteUser(int account, string password);     // 删除用户
 };
+
+int user_verify_callback(void *arg_ptr, int argc, char **argv, char **col_names); // 验证用户的回调函数
 
 # endif

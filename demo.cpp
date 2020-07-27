@@ -4,8 +4,6 @@
 # include "chatroom.h"
 # include "db.h"
 
-# include <tr1/functional>
-
 using namespace std;
 
 // void logger_test(){
