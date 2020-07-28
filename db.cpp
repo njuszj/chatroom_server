@@ -19,11 +19,17 @@ string UserDBManager::hash(string password) const{
 
 bool UserDBManager::verify(int account, string password) const{
     password = hash(password);
-    const char sql[100] = "SELECT password from user where account"
+    char sql[100];
+    char **res = NULL;
+    char *err_msg = NULL;
+    int row,col,ret;
+    sprintf(sql, "SELECT password from user where account='%s'", password.c_str());
+    sqlite3_get_table(db_ptr, sql, &res, &row, &col, &err_msg);
+    sqlite3_free_table(res);
 }
 
 int DBManager::execute(const char* sql){
-    char *err_message = new char[100];
+    char *err_message = NULL;
     int r = sqlite3_exec(db_ptr, sql, NULL, NULL, &err_message);
     if(r != SQLITE_OK){
         logger.ERROR("执行SQL语句出错!");
@@ -39,14 +45,4 @@ void ChatroomDBManager::createOriginTables(){
         account  INT             NOT NULL, \
         nickname CHAR(100)       NOT NULL, \
         password CHAR(128)       NOT NULL);");
-}
-
-int user_verify_callback(void *verify_tag, int argc, char **argv, char **col_names){
-    user_verify_tag tag = *(user_verify_tag*)tag;
-    logger.DEBUG("进入用户验证的回调函数");
-    if(argc == 0)
-        tag = account_error;
-    else{
-        
-    }
 }
