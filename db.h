@@ -10,6 +10,21 @@
 
 extern Logger logger;
 
+class DBGetTable{
+private:
+    int cols;
+    int rows;
+    char** res;
+    char* err_msg;
+    sqlite3* db_ptr;
+public:
+    DBGetTable(sqlite3* ptr):cols(0), rows(0), res(NULL), err_msg(NULL){};
+    DBGetTable() = delete;  // 不需要默认构造函数
+    ~DBGetTable();
+public:
+    char** get_table(const char* sql);
+};
+
 class DBManager{
 public:
     DBManager():db_ptr(NULL){};

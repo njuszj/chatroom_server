@@ -1,5 +1,19 @@
 # include "db.h"
 
+DBGetTable::~DBGetTable(){
+    // 析构函数主要调用free_table函数释放资源
+    sqlite3_free_table(res);
+    free(err_msg);
+}
+
+char** DBGetTable::get_table(const char* sql){
+    int r = sqlite3_get_table(db_ptr, sql, &res, &rows, &cols, &err_msg);
+    if(r != SQLITE_OK){
+        logger.ERROR(err_msg);
+    }
+    return res;
+}
+
 DBManager::DBManager(const char* filename){
     int r = sqlite3_open(filename, &db_ptr);
     if(r != SQLITE_OK) {
@@ -25,6 +39,7 @@ bool UserDBManager::verify(int account, string password) const{
     int row,col,ret;
     sprintf(sql, "SELECT password from user where account='%s'", password.c_str());
     sqlite3_get_table(db_ptr, sql, &res, &row, &col, &err_msg);
+
     sqlite3_free_table(res);
 }
 
