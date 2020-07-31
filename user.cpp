@@ -12,7 +12,7 @@ bool User::isValid() const{
 
 User& User::operator=(const User& rst){
     this->account = rst.account;
-    this->nickname = rst.nickname;
+    this->username = rst.username;
     this->valid = rst.valid;
     return *this;
 }
@@ -28,7 +28,7 @@ bool User::operator<(const User& rst) const{
 }
 
 string User::getNickname() const{
-    return nickname;
+    return username;
 }
 
 int User::getAccount() const{

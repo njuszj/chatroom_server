@@ -23,7 +23,7 @@ public:
     Logger(log_target target, log_level level, string path);
     void DEBUG(string text);
     void INFO(string text);
-    void WARNING(string text);
+    void WARN(string text);
     void ERROR(string text);
 };
 

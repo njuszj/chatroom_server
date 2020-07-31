@@ -3,15 +3,24 @@
 DBGetTable::~DBGetTable(){
     // 析构函数主要调用free_table函数释放资源
     sqlite3_free_table(res);
-    free(err_msg);
+    sqlite3_free(err_msg);
 }
 
-char** DBGetTable::get_table(const char* sql){
+char** DBGetTable::getTable(const char* sql){
     int r = sqlite3_get_table(db_ptr, sql, &res, &rows, &cols, &err_msg);
     if(r != SQLITE_OK){
         logger.ERROR(err_msg);
     }
     return res;
+}
+
+string DBGetTable::getItem(const char* sql){
+    // 只查询单个记录，返回字符串类型
+    getTable(sql);
+    if(cols > 1 || rows > 1){
+        logger.WARN("返回字段不止一条");
+    }
+    return *(res + 1);
 }
 
 DBManager::DBManager(const char* filename){
@@ -32,15 +41,15 @@ string UserDBManager::hash(string password) const{
 }
 
 bool UserDBManager::verify(int account, string password) const{
-    password = hash(password);
+    // 验证外部提供的密码是否正确
     char sql[100];
-    char **res = NULL;
-    char *err_msg = NULL;
-    int row,col,ret;
     sprintf(sql, "SELECT password from user where account='%s'", password.c_str());
-    sqlite3_get_table(db_ptr, sql, &res, &row, &col, &err_msg);
-
-    sqlite3_free_table(res);
+    DBGetTable query_handle(db_ptr);
+    string true_password = query_handle.getItem(sql);
+    true_password = hash(true_password);
+    password = hash(password);
+    if(true_password == password) return true;
+    else return false;
 }
 
 int DBManager::execute(const char* sql){
@@ -53,11 +62,19 @@ int DBManager::execute(const char* sql){
     return r;
 }
 
+string UserDBManager::getUserName(int account) const{
+    char sql[100];
+    sprintf(sql, "SELECT username from user where account='%d'", account);
+    DBGetTable query_handle(db_ptr);
+    string username = query_handle.getItem(sql);
+    return username;
+}
+
 void ChatroomDBManager::createOriginTables(){
     // 建表语句
     execute("CREATE TABLE User( \
         id       INT PRIMARY KEY NOT NULL, \
         account  INT             NOT NULL, \
-        nickname CHAR(100)       NOT NULL, \
+        username CHAR(100)       NOT NULL, \
         password CHAR(128)       NOT NULL);");
 }

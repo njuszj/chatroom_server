@@ -22,7 +22,8 @@ public:
     DBGetTable() = delete;  // 不需要默认构造函数
     ~DBGetTable();
 public:
-    char** get_table(const char* sql);
+    char** getTable(const char* sql);
+    string getItem(const char* sql);
 };
 
 class DBManager{
@@ -52,11 +53,12 @@ public:
     virtual ~UserDBManager(){};
 
     string hash(string password) const;     // 对密码进行哈希处理，避免明文储存
-    bool verify(int account, string password) const; // 验证用户密码
 public:
-    bool insertUser(int account, string nickname, string password);  // 新增用户
+    bool insertUser(int account, string username, string password);  // 新增用户
     bool modifyPassword(int account, string password); // 修改用户密码
     bool deleteUser(int account, string password);     // 删除用户
+    bool verify(int account, string password) const; // 验证用户密码
+    string getUserName(int account) const; // 获取用户名
 };
 
 # endif

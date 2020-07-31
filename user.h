@@ -13,12 +13,12 @@ using std::set;
 
 class User{
 public:
-    User():account(0), nickname(""){};
-    User(int ac, string nk):account(ac), nickname(nk){};
+    User():account(0), username(""){};
+    User(int ac, string nk):account(ac), username(nk){};
     ~User(){};
 private:
     int account;     // 帐号
-    string nickname; // 昵称
+    string username; // 昵称
     bool valid;      // 是否是有效用户
 public:
     User& operator=(const User&);

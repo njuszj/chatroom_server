@@ -60,7 +60,7 @@ void Logger::INFO(string text){
     this->output(text, info);
 }
 
-void Logger::WARNING(string text){
+void Logger::WARN(string text){
     this->output(text, warning);
 }
 
