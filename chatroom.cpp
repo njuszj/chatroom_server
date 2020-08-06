@@ -31,13 +31,6 @@ void Chatroom::cmdProcess(const char* buff, int cid){
     else return;
 }
 
-void Chatroom::addUser(const User& user, int cid){
-    logger.INFO(string() + "用户: "+user.getNickname()+"登录，连接id是: "+to_string(cid));
-    active_users.insert(user);
-    cid_to_user[cid] = user.getAccount();
-    user_to_cid[user.getAccount()] = cid;
-}
-
 void* process(void* arg){
     // 处理函数，负责接收每一个客户发来的消息
     pthread_detach(pthread_self());       // 防止线程阻塞
@@ -100,9 +93,9 @@ void Chatroom::startListen(){
 void Chatroom::m_login(int cid){
     // 用户尝试登录
     // 接收帐号信息
-    User *user = new User();
-    char* account = new char[SHORT_BUFFSIZE];     // 为帐号创建接收缓冲区
-    char* passwd = new char[SHORT_BUFFSIZE];
+    User *user = NULL;
+    char account[SHORT_BUFFSIZE];     // 为帐号创建接收缓冲区
+    char passwd[SHORT_BUFFSIZE];
     sendMessage(cid, "ACCOUNT: ");
     memset(account, 0, SHORT_BUFFSIZE);
     int r1 = recv(cid, account, SHORT_BUFFSIZE, 0);
@@ -121,11 +114,11 @@ void Chatroom::m_login(int cid){
     }
 
     int digital_account = atoi(account);
-    *user = verify(digital_account, passwd);
-    if(user->isValid()){
+    user = user_manager.verify(digital_account, passwd);
+    if(user){
         logger.INFO(string()+"用户成功登录");
         sendMessage(cid, "Welcome to chatroom!");
-        this->addUser(*user, cid);
+        this->user_manager.addUser(*user, cid);
         return;
     }
     else{
@@ -159,7 +152,7 @@ void Chatroom::sendMessage(int cid, string message){
 
 void Chatroom::freeIndexs(int index){
     // 释放一个index
-    cid_to_user.erase(connects[index]);
+    user_manager.freeCid(connects[index]);
     connects[index] = 0;
     tids[index] = 0;
     if(active_indexs.find(index) != active_indexs.end())
@@ -167,25 +160,11 @@ void Chatroom::freeIndexs(int index){
     free_indexs.push(index);  // 放回可用栈中
 }
 
-void Chatroom::freeUsers(const User& user){
-    set<User>::iterator itor = active_users.find(user);
-    if(itor != active_users.end()){
-        // 释放User占用的资源
-        delete (User*)(&(*itor));
-        this->active_users.erase(user);
-        user_to_cid.erase(user.getAccount());
-    }
-    logger.INFO("用户下线");
-}
-
-int Chatroom::m_getUserCid(int id){
-    if(user_to_cid.find(id) != user_to_cid.end()){
-        return user_to_cid[id];
-    }
-    else return 0;
-}
-
 void Chatroom::sendMessageToUser(int id, string message){
     int cid = m_getUserCid(id);
     sendMessage(cid, message);
+}
+
+int Chatroom::m_getUserCid(int id){
+    return user_manager.getUserCid(id);
 }

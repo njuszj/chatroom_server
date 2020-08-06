@@ -3,9 +3,12 @@
 # ifndef USER_H
 # define USER_H
 # include "environment.h"
+# include "db.h"
 # include <map>
 # include <vector>
 # include <set>
+
+extern Logger logger;
 
 using std::map;
 using std::vector;
@@ -14,6 +17,7 @@ using std::set;
 class User{
 public:
     User():account(0), username(""){};
+    User(const User&);
     User(int ac, string nk):account(ac), username(nk){};
     ~User(){};
 private:
@@ -30,6 +34,19 @@ public:
     void active();  // 激活用户
 };
 
-User verify(int account, string passwd); // 验证密码是否正确
+class UserManager{
+public:
+    User* verify(int account, string passwd);   // 验证密码是否正确
+    void addUser(const User&, int);            // 添加一个活跃用户
+    void freeUser(const User&);               // 一个用户离线
+    void freeCid(int cid);                    // 一个tcp连接断开，对应的用户释放
+    int getUserCid(int id);
+private:
+    UserDBManager db_manager;
+    set<User> active_users;    // 在线用户
+    map<int, int> cid_to_user; // 标记一个TCP连接是否是一个认证的用户, 一个TCP连接只有一个用户
+    map<int, int> user_to_cid; // 一个用户对应的TCP连接，可能不止一个，但是暂时只取一个
+};
+
 
 # endif

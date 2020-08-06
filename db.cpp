@@ -73,8 +73,11 @@ string UserDBManager::getUserName(int account) const{
 void ChatroomDBManager::createOriginTables(){
     // 建表语句
     execute("CREATE TABLE User( \
-        id       INT PRIMARY KEY NOT NULL, \
-        account  INT             NOT NULL, \
-        username CHAR(100)       NOT NULL, \
-        password CHAR(128)       NOT NULL);");
+        id       INT PRIMARY KEY NOT NULL  UNIQUE, \
+        account  INT             NOT NULL  UNIQUE, \
+        username CHAR(50)        NOT NULL  UNIQUE, \
+        password CHAR(128)       NOT NULL, \
+        birthday DATE, \
+        email    CHAR(50), \
+        remark   CHAR(100));");
 }
