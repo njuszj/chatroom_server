@@ -20,6 +20,11 @@ string DBGetTable::getItem(const char* sql){
     if(cols > 1 || rows > 1){
         logger.WARN("返回字段不止一条");
     }
+    else if(rows == 0){
+        logger.WARN("没有查询到记录");
+        return string("");
+    }
+    logger.DEBUG(*(res+1));
     return *(res + 1);
 }
 
@@ -43,9 +48,10 @@ string UserDBManager::hash(string password) const{
 bool UserDBManager::verify(int account, string password) const{
     // 验证外部提供的密码是否正确
     char sql[100];
-    sprintf(sql, "SELECT password from user where account='%s'", password.c_str());
+    sprintf(sql, "SELECT password from user where account='%d'", account);
     DBGetTable query_handle(db_ptr);
     string true_password = query_handle.getItem(sql);
+    // 上面一条 BUG
     true_password = hash(true_password);
     password = hash(password);
     if(true_password == password) return true;

@@ -6,18 +6,18 @@
 
 using namespace std;
 
-// void logger_test(){
-//     Logger logger(Logger::file_and_terminal, Logger::debug, "result.log");
-//     logger.DEBUG("What happend?");
-//     logger.INFO("This is good.");
-//     logger.WARNING("Yes...");
-//     logger.ERROR("IO Error!");
-// }
+void logger_test(){
+    Logger logger(Logger::file_and_terminal, Logger::debug, "result.log");
+    logger.DEBUG("What happend?");
+    logger.INFO("This is good.");
+    logger.WARN("Yes...");
+    logger.ERROR("IO Error!");
+}
 
-// void sql_test(){
-//     ChatroomDBManager cdb("chatroom.db");
-//     cdb.createOriginTables();
-// }
+void sql_test(){
+    ChatroomDBManager cdb("chatroom.db");
+    cdb.createOriginTables();
+}
 
 void hash_test(){
     string hello = "sarfedfe";
@@ -25,8 +25,6 @@ void hash_test(){
 }
 
 int main(){
-    // Chatroom se;
-    // se.startListen();
-    // sql_test();
-    hash_test();
+    Chatroom se;
+    se.startListen();
 }

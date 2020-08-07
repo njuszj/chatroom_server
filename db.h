@@ -33,7 +33,6 @@ public:
     virtual ~DBManager();
     int execute(const char* sql);
 protected:
-    Logger logger;  // 日志记录
     sqlite3* db_ptr; // 数据库文件指针
 };
 
