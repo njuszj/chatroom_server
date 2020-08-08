@@ -12,11 +12,13 @@ extern Logger logger;
 
 class DBGetTable{
 private:
+    sqlite3* db_ptr;
+public:
+    // 从面向对象设计角度来说应该是private的，但是这样sqlite无法访问这些成员(? 存疑)
     int cols;
     int rows;
     char** res;
     char* err_msg;
-    sqlite3* db_ptr;
 public:
     DBGetTable(sqlite3* ptr):cols(0), rows(0), res(NULL), err_msg(NULL){};
     DBGetTable() = delete;  // 不需要默认构造函数

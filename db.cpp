@@ -7,10 +7,16 @@ DBGetTable::~DBGetTable(){
 }
 
 char** DBGetTable::getTable(const char* sql){
-    int r = sqlite3_get_table(db_ptr, sql, &res, &rows, &cols, &err_msg);
+    logger.INFO("进入SQL查询");
+    char** _res = NULL;
+    char* _err_msg = NULL;
+    int _rows = 0;
+    int _cols = 0;
+    int r = sqlite3_get_table(db_ptr, sql, &_res, &_rows, &_cols, &_err_msg);
     if(r != SQLITE_OK){
-        logger.ERROR(err_msg);
+        logger.ERROR(_err_msg);
     }
+    logger.INFO(string()+"成功查询，行数"+to_string(rows)+"列数"+to_string(cols));
     return res;
 }
 
@@ -22,9 +28,9 @@ string DBGetTable::getItem(const char* sql){
     }
     else if(rows == 0){
         logger.WARN("没有查询到记录");
-        return string("");
+        return "sdcard";
     }
-    logger.DEBUG(*(res+1));
+    logger.DEBUG(string()+"单个查询结果"+*(res+1));
     return *(res + 1);
 }
 

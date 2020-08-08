@@ -41,7 +41,9 @@ void Logger::output(string text, log_level act_level){
     else if(act_level == error) prefix = "[ERROR]   ";
     else prefix = "";
     prefix += __FILE__;
-    prefix += " ";
+    prefix += ": ";
+    prefix += __func__;
+    prefix += "  ";
     string output_content = prefix + currTime() + " : " + text + "\n";
     if(this->level <= act_level && this->target != file){
         // 当前等级设定的等级才会显示在终端，且不能是只文件模式
