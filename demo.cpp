@@ -15,8 +15,7 @@ void logger_test(){
 }
 
 void sql_test(){
-    ChatroomDBManager cdb("chatroom.db");
-    cdb.createOriginTables();
+    UserDBManager udb("chatroom.db");
 }
 
 void hash_test(){
@@ -24,7 +23,10 @@ void hash_test(){
     cout << std::tr1::hash<std::string>()(hello) << endl;
 }
 
+# ifdef SQL_TEST_ON
+sql_test();
+# endif
+
 int main(){
-    Chatroom se;
-    se.startListen();
+  return 0;
 }

@@ -34,6 +34,7 @@ public:
     DBManager(const char* filename);
     virtual ~DBManager();
     int execute(const char* sql);
+    virtual void createTable();
 protected:
     sqlite3* db_ptr; // 数据库文件指针
 };
@@ -43,8 +44,6 @@ public:
     ChatroomDBManager():DBManager(){};
     ChatroomDBManager(const char* filename):DBManager(filename){};
     virtual ~ChatroomDBManager(){};
-public:
-    void createOriginTables();
 };
 
 class UserDBManager: public DBManager{
@@ -52,7 +51,7 @@ public:
     UserDBManager():DBManager(){};
     UserDBManager(const char* filename):DBManager(filename){};
     virtual ~UserDBManager(){};
-
+    virtual void createTable();
     string hash(string password) const;     // 对密码进行哈希处理，避免明文储存
 public:
     bool insertUser(int account, string username, string password);  // 新增用户

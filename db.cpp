@@ -82,8 +82,8 @@ string UserDBManager::getUserName(int account) const{
     return username;
 }
 
-void ChatroomDBManager::createOriginTables(){
-    // 建表语句
+void UserDBManager::createTable(){
+    // 创建用户表
     execute("CREATE TABLE User( \
         id       INT PRIMARY KEY NOT NULL  UNIQUE, \
         account  INT             NOT NULL  UNIQUE, \
