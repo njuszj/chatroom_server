@@ -15,7 +15,14 @@ void logger_test(){
 }
 
 void sql_test(){
-    UserDBManager udb("chatroom.db");
+    UserDBManager udb("db_test.db");
+    udb.cleanTable();
+    udb.createTable();
+    udb.insertUser(10001, "Alice", "123456");
+    udb.insertUser(10002, "Bob", "19980723");
+    udb.insertUser(10003, "Ciri", "admin123");
+    string usr = udb.getUserName(10001);
+    cout << usr << endl;
 }
 
 void hash_test(){
@@ -23,10 +30,8 @@ void hash_test(){
     cout << std::tr1::hash<std::string>()(hello) << endl;
 }
 
-# ifdef SQL_TEST_ON
-sql_test();
-# endif
-
 int main(){
-  return 0;
+# ifdef SQL_TEST_ON
+    sql_test();
+# endif
 }

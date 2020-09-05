@@ -7,13 +7,14 @@ DBGetTable::~DBGetTable(){
 }
 
 char** DBGetTable::getTable(const char* sql){
-    logger.INFO("进入SQL查询");
     char** _res = NULL;
     char* _err_msg = NULL;
     int _rows = 0;
     int _cols = 0;
     int r = sqlite3_get_table(db_ptr, sql, &_res, &_rows, &_cols, &_err_msg);
+    // r - > 21: MISUSE
     if(r != SQLITE_OK){
+        // 这里出现了问题, _err_msg 是NULL
         logger.ERROR(_err_msg);
     }
     logger.INFO(string()+"成功查询，行数"+to_string(rows)+"列数"+to_string(cols));
@@ -34,6 +35,9 @@ string DBGetTable::getItem(const char* sql){
     return *(res + 1);
 }
 
+
+
+
 DBManager::DBManager(const char* filename){
     int r = sqlite3_open(filename, &db_ptr);
     if(r != SQLITE_OK) {
@@ -41,6 +45,14 @@ DBManager::DBManager(const char* filename){
         logger.ERROR(sqlite3_errmsg(db_ptr));
         exit(1);
     }
+}
+
+void DBManager::createTable(){
+    return;
+}
+
+void DBManager::cleanTable(){
+    return;
 }
 
 DBManager::~DBManager(){
@@ -75,7 +87,7 @@ int DBManager::execute(const char* sql){
 }
 
 string UserDBManager::getUserName(int account) const{
-    char sql[100];
+    char sql[128];
     sprintf(sql, "SELECT username from user where account='%d'", account);
     DBGetTable query_handle(db_ptr);
     string username = query_handle.getItem(sql);
@@ -85,11 +97,25 @@ string UserDBManager::getUserName(int account) const{
 void UserDBManager::createTable(){
     // 创建用户表
     execute("CREATE TABLE User( \
-        id       INT PRIMARY KEY NOT NULL  UNIQUE, \
+        id       INTEGER PRIMARY KEY NOT NULL UNIQUE, \
         account  INT             NOT NULL  UNIQUE, \
         username CHAR(50)        NOT NULL  UNIQUE, \
         password CHAR(128)       NOT NULL, \
         birthday DATE, \
         email    CHAR(50), \
         remark   CHAR(100));");
+}
+
+bool UserDBManager::insertUser(int account, string username, string password){
+    char sql[128] = "";
+    password = hash(password);
+    sprintf(sql, "INSERT INTO User (account, username, password) VALUES(%d, '%s', '%s');", account, username.c_str(), password.c_str());
+    return execute(sql);
+}
+
+void UserDBManager::cleanTable(){
+#ifndef SQL_TEST_ON
+    return;
+#endif
+    execute("DROP TABLE IF EXISTS User;");
 }
