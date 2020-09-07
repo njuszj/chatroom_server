@@ -1,42 +1,17 @@
 # include "db.h"
 
-DBGetTable::~DBGetTable(){
-    // 析构函数主要调用free_table函数释放资源
-    sqlite3_free_table(res);
-    sqlite3_free(err_msg);
-}
-
-char** DBGetTable::getTable(const char* sql){
-    char** _res = NULL;
-    char* _err_msg = NULL;
-    int _rows = 0;
-    int _cols = 0;
-    int r = sqlite3_get_table(db_ptr, sql, &_res, &_rows, &_cols, &_err_msg);
-    // r - > 21: MISUSE
-    if(r != SQLITE_OK){
-        // 这里出现了问题, _err_msg 是NULL
-        logger.ERROR(_err_msg);
+int UserDBManager::callback(void* para, int colnums, char** data, char** cols){
+    // 对每一条查询结果调用一次该回调函数
+    for(int i=0; i<colnums; i++){
+        cout << cols[i] << " |";
     }
-    logger.INFO(string()+"成功查询，行数"+to_string(rows)+"列数"+to_string(cols));
-    return res;
-}
-
-string DBGetTable::getItem(const char* sql){
-    // 只查询单个记录，返回字符串类型
-    getTable(sql);
-    if(cols > 1 || rows > 1){
-        logger.WARN("返回字段不止一条");
+    cout << endl;
+    for(int i=0; i<colnums; i++){
+        cout << data[i] << " |";
     }
-    else if(rows == 0){
-        logger.WARN("没有查询到记录");
-        return "sdcard";
-    }
-    logger.DEBUG(string()+"单个查询结果"+*(res+1));
-    return *(res + 1);
+    cout << endl;
+    return 0;
 }
-
-
-
 
 DBManager::DBManager(const char* filename){
     int r = sqlite3_open(filename, &db_ptr);
@@ -65,10 +40,10 @@ string UserDBManager::hash(string password) const{
 
 bool UserDBManager::verify(int account, string password) const{
     // 验证外部提供的密码是否正确
+    // 需要回调函数提供密码查询
     char sql[100];
     sprintf(sql, "SELECT password from user where account='%d'", account);
-    DBGetTable query_handle(db_ptr);
-    string true_password = query_handle.getItem(sql);
+    string true_password = ??;
     // 上面一条 BUG
     true_password = hash(true_password);
     password = hash(password);
@@ -89,8 +64,9 @@ int DBManager::execute(const char* sql){
 string UserDBManager::getUserName(int account) const{
     char sql[128];
     sprintf(sql, "SELECT username from user where account='%d'", account);
-    DBGetTable query_handle(db_ptr);
-    string username = query_handle.getItem(sql);
+    // DBGetTable query_handle(db_ptr);
+    string username;
+    int r = sqlite3_exec(db_ptr, sql, callback, NULL, NULL);
     return username;
 }
 
