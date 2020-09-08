@@ -7,6 +7,7 @@
 # include "log_sys.h"
 # include <tr1/functional>
 # include <sqlite3.h>
+# include <assert.h>
 
 extern Logger logger;
 
@@ -31,8 +32,11 @@ public:
 
 
 class UserDBManager: public DBManager{
+    // 管理数据库中的用户表
 private:
     string hash(string password) const;     // 对密码进行哈希处理，避免明文储存
+public:
+    string getPassword(int account) const;  // 获取密码
 public:
     UserDBManager():DBManager(){};
     UserDBManager(const char* filename):DBManager(filename){};
@@ -46,5 +50,6 @@ public:
     string getUserName(int account) const; // 获取用户名
 private:
     static int callback(void* para, int colnums, char** data, char** cols);
+    static int callback_getPassword(void* para, int colnums, char** data, char** cols);
 };
 # endif

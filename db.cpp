@@ -13,6 +13,14 @@ int UserDBManager::callback(void* para, int colnums, char** data, char** cols){
     return 0;
 }
 
+int UserDBManager::callback_getPassword(void* para, int colnums, char** data, char** cols){
+    // 对每一条查询结果调用一次该回调函数
+    char* password = (char*)(para);
+    assert(colnums == 1);  // 应该假定只有一列结果
+    strncpy(password, data[0], strlen(data[0]));
+    return 0;
+}
+
 DBManager::DBManager(const char* filename){
     int r = sqlite3_open(filename, &db_ptr);
     if(r != SQLITE_OK) {
@@ -40,13 +48,8 @@ string UserDBManager::hash(string password) const{
 
 bool UserDBManager::verify(int account, string password) const{
     // 验证外部提供的密码是否正确
-    // 需要回调函数提供密码查询
-    char sql[100];
-    sprintf(sql, "SELECT password from user where account='%d'", account);
-    string true_password = ??;
-    // 上面一条 BUG
-    true_password = hash(true_password);
     password = hash(password);
+    string true_password = getPassword(account);
     if(true_password == password) return true;
     else return false;
 }
@@ -68,6 +71,17 @@ string UserDBManager::getUserName(int account) const{
     string username;
     int r = sqlite3_exec(db_ptr, sql, callback, NULL, NULL);
     return username;
+}
+
+string UserDBManager::getPassword(int account) const{
+    // 返回对应用户(哈希过后的)密码
+    char sql[128];
+    sprintf(sql, "SELECT password from user where account='%d'", account);
+    string password;
+    char* errmsg; // 错误信息
+    int r = sqlite3_exec(db_ptr, sql, callback_getPassword, (void*)(&password), &errmsg);
+    password = hash(password);
+    return password;
 }
 
 void UserDBManager::createTable(){

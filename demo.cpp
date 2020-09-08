@@ -22,7 +22,8 @@ void sql_test(){
     udb.insertUser(10002, "Bob", "19980723");
     udb.insertUser(10003, "Ciri", "admin123");
     string usr = udb.getUserName(10001);
-    cout << usr << endl;
+    string passwd = udb.getPassword(10001);
+    cout << usr << " : " << passwd << endl;
 }
 
 void hash_test(){
