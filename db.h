@@ -8,10 +8,9 @@
 # include <tr1/functional>
 # include <sqlite3.h>
 # include <assert.h>
-# include <memory>
+
 
 extern Logger logger;
-using std::shared_ptr;
 
 class DBManager{
 public:
@@ -36,16 +35,15 @@ public:
 class UserDBManager: public DBManager{
     // 管理数据库中的用户表
 public:
-    struct user_hash_password {
+    // 向回调函数传递的数据结构
+    struct S_hash_password {
         string hash_password;
     };
-    struct s_username {
+    struct S_username {
         string username;
     };
 private:
     string hash(string password) const;     // 对密码进行哈希处理，避免明文储存
-public:
-    string getPassword(int account) const;  // 获取密码
 public:
     UserDBManager():DBManager(){};
     UserDBManager(const char* filename):DBManager(filename){};
@@ -57,6 +55,7 @@ public:
     bool deleteUser(int account, string password);     // 删除用户
     bool verify(int account, string password) const; // 验证用户密码
     string getUserName(int account) const; // 获取用户名
+    string getPassword(int account) const;  // 获取密码
 private:
     static int callback_getUsername(void* para, int colnums, char** data, char** cols);
     static int callback_getPassword(void* para, int colnums, char** data, char** cols);

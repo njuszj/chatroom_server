@@ -3,7 +3,7 @@
 
 int UserDBManager::callback_getUsername(void* para, int colnums, char** data, char** cols){
     // 对每一条查询结果调用一次该回调函数
-    s_username* un = (s_username*)(para);
+    S_username* un = (S_username*)(para);
     assert(colnums == 1);
     un->username = data[0];
     return 0;
@@ -11,7 +11,7 @@ int UserDBManager::callback_getUsername(void* para, int colnums, char** data, ch
 
 int UserDBManager::callback_getPassword(void* para, int colnums, char** data, char** cols){
     // 对每一条查询结果调用一次该回调函数
-    user_hash_password* hp = (user_hash_password*)(para);
+    S_hash_password* hp = (S_hash_password*)(para);
     assert(colnums == 1);  // 应该假定只有一列结果
     hp->hash_password = data[0];
     return 0;
@@ -63,7 +63,7 @@ int DBManager::execute(const char* sql){
 string UserDBManager::getUserName(int account) const{
     char sql[128];
     sprintf(sql, "SELECT username from user where account='%d'", account);
-    s_username* struct_username = new s_username();
+    S_username* struct_username = new S_username();
     char* errmsg;
     int r = sqlite3_exec(db_ptr, sql, callback_getUsername, (void*)(struct_username), &errmsg);
     string username = struct_username->username;
@@ -75,7 +75,7 @@ string UserDBManager::getPassword(int account) const{
     // 返回对应用户(哈希过后的)密码
     char sql[128];
     sprintf(sql, "SELECT password from user where account='%d'", account);
-    user_hash_password* struct_password = new user_hash_password();
+    S_hash_password* struct_password = new S_hash_password();
     char* errmsg; // 错误信息
     int r = sqlite3_exec(db_ptr, sql, callback_getPassword, (void*)(struct_password), &errmsg);
     string password = hash(struct_password->hash_password);

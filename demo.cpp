@@ -23,7 +23,7 @@ void sql_test(){
     udb.insertUser(10003, "Ciri", "admin123");
     string usr = udb.getUserName(10001);
     string passwd = udb.getPassword(10001);
-    cout << "调用结束" << endl;
+    cout << "测试完毕" << endl;
     cout << usr << " : " << passwd << endl;
 }
 
