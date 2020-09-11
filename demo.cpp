@@ -6,6 +6,11 @@
 
 using namespace std;
 
+void demo_test(){
+    Chatroom ct;
+    ct.startListen();
+}
+
 void logger_test(){
     Logger logger(Logger::file_and_terminal, Logger::debug, "result.log");
     logger.DEBUG("What happend?");
@@ -35,5 +40,9 @@ void hash_test(){
 int main(){
 # ifdef SQL_TEST_ON
     sql_test();
+# endif
+
+# ifdef DEMO_TEST_ON
+    demo_test();
 # endif
 }
