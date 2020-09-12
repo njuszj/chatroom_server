@@ -47,7 +47,9 @@ void User::active(){
     this->valid = true;
 }
 
-
+void UserManager::setDatabase(const char* path){
+    db_manager.changePtr(path);
+}
 
 void UserManager::addUser(const User& user, int cid){
     logger.INFO(string() + "用户: "+user.getNickname()+"登录，连接id是: "+to_string(cid));

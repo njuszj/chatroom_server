@@ -6,18 +6,21 @@ ProcessArg::ProcessArg(int cid, int index, Chatroom* ct){
     this->cid = cid;
 }
 
-Chatroom::Chatroom(string path){
+Chatroom::Chatroom(){
     // 默认构造函数
     socket_id = tcp_manager.createSocket();
     for(int i=99; i>=0; i--){
         // 初始化空闲栈
         free_indexs.push(i);
     }
-    database_path = path;
 }
 
 Chatroom::~Chatroom(){
 
+}
+
+void Chatroom::setDatabase(const char* path){
+    user_manager.setDatabase(path);
 }
 
 void Chatroom::cmdProcess(const char* buff, int cid){
@@ -52,6 +55,7 @@ void* process(void* arg){
             else server->cmdProcess(buff, cid);
         }
         else if(n > 0) server->broadcast(buff, cid);
+        else break;
     }
     close(cid);
     server->freeIndexs(parg->index);

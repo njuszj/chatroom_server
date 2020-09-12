@@ -21,7 +21,7 @@ extern Logger logger;
 class Chatroom{
     // 聊天室服务端主体
 public:
-    Chatroom(string path); // 构造函数
+    Chatroom(); // 构造函数
     ~Chatroom();// 析构函数
     void startListen();//开始监听端口接受请求
     void freeIndexs(int index);  // 释放一个资源
@@ -29,8 +29,8 @@ public:
     void sendMessage(int cid, string message);       // 向一个特定的tcp连接写入消息
     void sendMessageToUser(int , string); // 向一个注册的用户发送消息
     void cmdProcess(const char*, int);  // 命令处理
+    void setDatabase(const char* path);      // 设置数据库
 private:
-    string database_path;
     void m_login(int cid);    // 用户登录，返回一个用户对象
     int m_getUserCid(int id); // 获取用户的TCP连接号
     TcpServer tcp_manager;

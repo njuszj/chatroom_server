@@ -9,6 +9,7 @@ using namespace std;
 void demo_test(){
     Chatroom ct;
     ct.startListen();
+    ct.setDatabase("db_test.db");
 }
 
 void logger_test(){

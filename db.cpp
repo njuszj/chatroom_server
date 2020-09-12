@@ -78,7 +78,7 @@ string UserDBManager::getPassword(int account) const{
     S_hash_password* struct_password = new S_hash_password();
     char* errmsg; // 错误信息
     int r = sqlite3_exec(db_ptr, sql, callback_getPassword, (void*)(struct_password), &errmsg);
-    string password = hash(struct_password->hash_password);
+    string password = struct_password->hash_password;
     delete struct_password;
     return password;
 }
@@ -107,4 +107,13 @@ void UserDBManager::cleanTable(){
     return;
 #endif
     execute("DROP TABLE IF EXISTS User;");
+}
+
+void DBManager::changePtr(const char* path){
+    int r = sqlite3_open(path, &db_ptr);
+    if(r != SQLITE_OK) {
+        logger.ERROR("打开sqlite3数据库失败");
+        logger.ERROR(sqlite3_errmsg(db_ptr));
+        exit(1);
+    }
 }

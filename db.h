@@ -20,6 +20,7 @@ public:
     int execute(const char* sql);
     virtual void createTable();
     virtual void cleanTable();
+    void changePtr(const char* path);
 protected:
     sqlite3* db_ptr; // 数据库文件指针
 };

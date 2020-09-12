@@ -41,6 +41,7 @@ public:
     void freeUser(const User&);               // 一个用户离线
     void freeCid(int cid);                    // 一个tcp连接断开，对应的用户释放
     int getUserCid(int id);
+    void setDatabase(const char* path);
 private:
     UserDBManager db_manager;
     set<User> active_users;    // 在线用户
