@@ -39,13 +39,20 @@ DBManager::~DBManager(){
 }
 
 string UserDBManager::hash(string password) const{
-    return to_string(std::tr1::hash<std::string>()(password));
+    int n = password.size() - 1;
+    while(n >= 0 && (password[n] == '\r' || password[n] == '\n'))
+        password[n--] = '\0';
+    return to_string(std::tr1::hash<std::string>()(password.c_str()));
 }
 
 bool UserDBManager::verify(int account, string password) const{
     // 验证外部提供的密码是否正确
+    logger.DEBUG("进入底层密码验证函数");
+    logger.DEBUG(string() + "收到密码" + password);
     password = hash(password);
+    logger.DEBUG(string() + "收到哈希密码" + password);
     string true_password = getPassword(account);
+    logger.DEBUG(string() + "真实密码" + true_password);
     if(true_password == password) return true;
     else return false;
 }

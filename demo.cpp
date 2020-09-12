@@ -8,8 +8,8 @@ using namespace std;
 
 void demo_test(){
     Chatroom ct;
-    ct.startListen();
     ct.setDatabase("db_test.db");
+    ct.startListen();
 }
 
 void logger_test(){
@@ -36,6 +36,7 @@ void sql_test(){
 void hash_test(){
     string hello = "sarfedfe";
     cout << std::tr1::hash<std::string>()(hello) << endl;
+    cout << std::tr1::hash<std::string>()("123456\r\n") << endl;
 }
 
 int main(){
