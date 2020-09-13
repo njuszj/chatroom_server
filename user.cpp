@@ -35,11 +35,11 @@ bool User::operator<(const User& rst) const{
     else return false;
 }
 
-void User::setNickname(string nickname){
-    username = nickname;
+void User::setUsername(string username){
+    this->username = username;
 }
 
-string User::getNickname() const{
+string User::getUsername() const{
     return username;
 }
 

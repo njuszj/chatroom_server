@@ -28,7 +28,8 @@ public:
     void broadcast(string message, int exclude); // 向所有活跃连接广播一条消息
     void sendMessage(int cid, string message);       // 向一个特定的tcp连接写入消息
     void sendMessageToUser(int , string); // 向一个注册的用户发送消息
-    void cmdProcess(const char*, int);  // 命令处理
+    void cmdProcess(const char*, int);  // 命令处理模块
+    // void queryProcess(const char*, int); // 查询处理模块
     void setDatabase(const char* path);      // 设置数据库
 private:
     void m_login(int cid);    // 用户登录

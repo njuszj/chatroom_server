@@ -29,6 +29,7 @@ void sql_test(){
     udb.insertUser(10003, "Ciri", "admin123");
     string usr = udb.getUserName(10001);
     string passwd = udb.getPassword(10001);
+    udb.insertUser(10004, "Dudu", "123456");
     int account = udb.getMinUseableAccount();
     cout << usr << " : " << passwd << endl;
     cout << "下一可用账号为" << account << endl;

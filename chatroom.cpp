@@ -136,16 +136,34 @@ void Chatroom::m_register(int cid){
     // 用户尝试注册
     // 接收帐号信息
     char passwd[SHORT_BUFFSIZE];
+    char username[SHORT_BUFFSIZE];
     int account = user_manager.db_manager.getMinUseableAccount();
     sendMessage(cid, string() + "Your account is " + to_string(account) + "\n");
+    sendMessage(cid, "Please set username for your account: \n");
+    memset(username, 0, SHORT_BUFFSIZE);
+    int r1 = recv(cid, username, SHORT_BUFFSIZE, 0);
+    if(r1 < 0){
+        sendMessage(cid, "Receive username error. \n");
+        return;
+    }
     sendMessage(cid, "Please set password for your account: \n");
     memset(passwd, 0, SHORT_BUFFSIZE);
-    int r1 = recv(cid, passwd, SHORT_BUFFSIZE, 0);
-    if(r1 >= 0){
-        // 注册处理
+    int r2 = recv(cid, passwd, SHORT_BUFFSIZE, 0);
+    if(r2 >= 0){
+        int r = user_manager.db_manager.insertUser(account, username, passwd);
+        if(r){
+            sendMessage(cid, "Successfully register! Login now... ...\n");
+            this->user_manager.addUser(account, cid);
+            sendMessage(cid, "Login successfully. \n");
+            return;
+        }
+        else {
+            sendMessage(cid, "Failed to register. \n");
+        }
     }
     else{
-        // 错误处理
+        sendMessage(cid, "Receive passwd error. \n");
+        return;
     }
     return;
 }

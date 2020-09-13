@@ -122,7 +122,7 @@ bool UserDBManager::insertUser(int account, string username, string password){
     char sql[128] = "";
     password = hash(password);
     sprintf(sql, "INSERT INTO User (account, username, password) VALUES(%d, '%s', '%s');", account, username.c_str(), password.c_str());
-    return execute(sql);
+    return !execute(sql); // SQLITE_OK = 0
 }
 
 void UserDBManager::cleanTable(){

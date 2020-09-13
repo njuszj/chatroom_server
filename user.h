@@ -31,8 +31,8 @@ public:
     bool operator!=(const User&);
     bool operator<(const User&) const;
     bool isValid() const;
-    string getNickname() const;
-    void setNickname(string nickname);
+    string getUsername() const;
+    void setUsername(string username);
     int getAccount() const;
     void active();  // 激活用户
 };
