@@ -31,6 +31,7 @@ void Chatroom::cmdProcess(const char* buff, int cid){
     }
     else if(strncmp(buff, "cmd@register", 12) == 0){
         // 进入用户注册模块
+        m_register(cid);
     }
     else return;
 }
@@ -98,7 +99,6 @@ void Chatroom::startListen(){
 void Chatroom::m_login(int cid){
     // 用户尝试登录
     // 接收帐号信息
-    User *user = NULL;
     char account[SHORT_BUFFSIZE];     // 为帐号创建接收缓冲区
     char passwd[SHORT_BUFFSIZE];
     sendMessage(cid, "ACCOUNT: ");
@@ -119,19 +119,35 @@ void Chatroom::m_login(int cid){
     }
 
     int digital_account = atoi(account);
-    user = user_manager.verify(digital_account, passwd);
-    if(user){
+    if(user_manager.verify(digital_account, passwd)){
         logger.INFO(string()+"用户成功登录");
-        sendMessage(cid, "Welcome to chatroom!");
-        this->user_manager.addUser(*user, cid);
+        sendMessage(cid, "Welcome to chatroom!\n");
+        this->user_manager.addUser(digital_account, cid);
         return;
     }
     else{
         sendMessage(cid, "ERROR LOGIN");
         logger.INFO(string()+"用户登录失败");
-        delete user;  // 释放资源
         return;
     }
+}
+
+void Chatroom::m_register(int cid){
+    // 用户尝试注册
+    // 接收帐号信息
+    char passwd[SHORT_BUFFSIZE];
+    int account = user_manager.db_manager.getMinUseableAccount();
+    sendMessage(cid, string() + "Your account is " + to_string(account) + "\n");
+    sendMessage(cid, "Please set password for your account: \n");
+    memset(passwd, 0, SHORT_BUFFSIZE);
+    int r1 = recv(cid, passwd, SHORT_BUFFSIZE, 0);
+    if(r1 >= 0){
+        // 注册处理
+    }
+    else{
+        // 错误处理
+    }
+    return;
 }
 
 void Chatroom::broadcast(string message, int exclude){

@@ -1,5 +1,16 @@
 # include "db.h"
 
+void UserDBManager::createTable(){
+    // 创建用户表
+    execute("CREATE TABLE User( \
+        id       INTEGER PRIMARY KEY NOT NULL UNIQUE, \
+        account  INT             NOT NULL  UNIQUE, \
+        username CHAR(50)        NOT NULL  UNIQUE, \
+        password CHAR(128)       NOT NULL, \
+        birthday DATE, \
+        email    CHAR(50), \
+        remark   CHAR(100));");
+}
 
 int UserDBManager::callback_getUsername(void* para, int colnums, char** data, char** cols){
     // 对每一条查询结果调用一次该回调函数
@@ -16,6 +27,14 @@ int UserDBManager::callback_getPassword(void* para, int colnums, char** data, ch
     hp->hash_password = data[0];
     return 0;
 }
+
+int UserDBManager::callback_getMinUseableAccount(void* para, int colnums, char** data, char** cols){
+    assert(colnums == 1);  // 应该假定只有一列结果
+    int* account = (int*)(para);
+    *account = atoi(data[0]);
+    return 0;
+}
+
 
 DBManager::DBManager(const char* filename){
     int r = sqlite3_open(filename, &db_ptr);
@@ -90,16 +109,13 @@ string UserDBManager::getPassword(int account) const{
     return password;
 }
 
-void UserDBManager::createTable(){
-    // 创建用户表
-    execute("CREATE TABLE User( \
-        id       INTEGER PRIMARY KEY NOT NULL UNIQUE, \
-        account  INT             NOT NULL  UNIQUE, \
-        username CHAR(50)        NOT NULL  UNIQUE, \
-        password CHAR(128)       NOT NULL, \
-        birthday DATE, \
-        email    CHAR(50), \
-        remark   CHAR(100));");
+int UserDBManager::getMinUseableAccount() const{
+    char sql[128] = "SELECT max(account) from user;";
+    int account = 0;
+    char* errmsg;
+    int r = sqlite3_exec(db_ptr, sql, callback_getMinUseableAccount, (void*)(&account), &errmsg);
+    account++;
+    return account;
 }
 
 bool UserDBManager::insertUser(int account, string username, string password){

@@ -1,11 +1,7 @@
 # include "user.h"
 
-User* UserManager::verify(int account, string passwd){
-    if(db_manager.verify(account, passwd)){
-        User* user = new User(account, "Temp");
-        return user;
-    }
-    return NULL;
+bool UserManager::verify(int account, string passwd){
+    return db_manager.verify(account, passwd);
 }
 
 bool User::isValid() const{
@@ -30,9 +26,17 @@ bool User::operator==(const User& rst){
     else return false;
 }
 
+bool User::operator!=(const User& rst){
+    return !(*this == rst);
+}
+
 bool User::operator<(const User& rst) const{
     if(this->account < rst.account) return true;
     else return false;
+}
+
+void User::setNickname(string nickname){
+    username = nickname;
 }
 
 string User::getNickname() const{
@@ -51,13 +55,18 @@ void UserManager::setDatabase(const char* path){
     db_manager.changePtr(path);
 }
 
-void UserManager::addUser(const User& user, int cid){
-    logger.INFO(string() + "用户: "+user.getNickname()+"登录，连接id是: "+to_string(cid));
-    active_users.insert(user);
-    cid_to_user[cid] = user.getAccount();
-    user_to_cid[user.getAccount()] = cid;
+void UserManager::addUser(int account, int cid){
+    logger.INFO(string() + "用户: "+to_string(account)+"登录，连接id是: "+to_string(cid));
+    User* user = new User(account);
+    if(active_users.find(*user) != active_users.end()) {
+        logger.INFO("用户已经登陆，无需重复登陆");
+        delete user;
+        return;
+    }
+    active_users.insert(*user);
+    cid_to_user[cid] = account;
+    user_to_cid[account] = cid;
 }
-
 
 void UserManager::freeUser(const User& user){
     set<User>::iterator itor = active_users.find(user);

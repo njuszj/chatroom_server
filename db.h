@@ -55,10 +55,12 @@ public:
     bool modifyPassword(int account, string password); // 修改用户密码
     bool deleteUser(int account, string password);     // 删除用户
     bool verify(int account, string password) const; // 验证用户密码
-    string getUserName(int account) const; // 获取用户名
-    string getPassword(int account) const;  // 获取密码
+    int getMinUseableAccount() const;                      // 获取最小可用账号(用于注册)
+    string getUserName(int account) const;        // 获取用户名
+    string getPassword(int account) const;        // 获取密码
 private:
     static int callback_getUsername(void* para, int colnums, char** data, char** cols);
     static int callback_getPassword(void* para, int colnums, char** data, char** cols);
+    static int callback_getMinUseableAccount(void* para, int colnums, char** data, char** cols);
 };
 # endif
