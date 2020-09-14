@@ -181,6 +181,10 @@ void Chatroom::m_register(int cid){
 
 void Chatroom::m_query_status(int cid){
     const User* user = user_manager.getCidUser(cid);
+    if(user == NULL){
+        sendMessage(cid, string()+"You are offline, please login first. \n");
+        return;
+    }
     sendMessage(cid, string()+"-----------------------------------------------------\n");
     sendMessage(cid, string()+"---------- account: "+to_string(user->getAccount())+"\n");
     sendMessage(cid, string()+"---------- username: "+user->getUsername()+"\n");

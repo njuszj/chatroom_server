@@ -27,7 +27,7 @@ public:
     User():account(0), username(""){
         login_time = currTime();
     };
-    User(const User&){};
+    User(const User&);
     User(int ac):account(ac){
         login_time = currTime();
     };
