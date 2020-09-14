@@ -47,6 +47,10 @@ int User::getAccount() const{
     return account;
 }
 
+string User::getLoginTime() const{
+    return login_time;
+}
+
 void User::active(){
     this->valid = true;
 }
@@ -66,6 +70,7 @@ void UserManager::addUser(int account, int cid){
     user->setUsername(db_manager.getUserName(account));
     user->active();
     active_users.insert(*user);
+    delete user;  // active_users应该是复制到容器内部了?, delete 应该没有问题吧
     cid_to_user[cid] = account;
     user_to_cid[account] = cid;
 }
@@ -82,6 +87,14 @@ void UserManager::freeUser(const User& user){
 
 void UserManager::freeCid(int cid){
     cid_to_user.erase(cid);
+}
+
+const User* UserManager::getCidUser(int cid){
+    int account = cid_to_user[cid];
+    User tmp(account);
+    auto itor = active_users.find(tmp);
+    if(itor == active_users.end()) return NULL; 
+    else return &(*itor); // 我们返回在容器内部的指针
 }
 
 int UserManager::getUserCid(int id){

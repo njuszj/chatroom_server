@@ -63,6 +63,9 @@ void* process(void* arg){
             // 进入命令处理模块
             else server->cmdProcess(buff, cid);
         }
+        else if(strncmp(buff, "query@", 6) == 0){
+            server->queryProcess(buff, cid);
+        }
         else if(n > 0) server->broadcast(buff, cid);
         else break;
     }
@@ -177,7 +180,12 @@ void Chatroom::m_register(int cid){
 }
 
 void Chatroom::m_query_status(int cid){
-    
+    const User* user = user_manager.getCidUser(cid);
+    sendMessage(cid, string()+"-----------------------------------------------------\n");
+    sendMessage(cid, string()+"---------- account: "+to_string(user->getAccount())+"\n");
+    sendMessage(cid, string()+"---------- username: "+user->getUsername()+"\n");
+    sendMessage(cid, string()+"---------- login_time: "+user->getLoginTime()+"\n");
+    sendMessage(cid, string()+"-----------------------------------------------------\n");
 }
 
 void Chatroom::broadcast(string message, int exclude){

@@ -15,6 +15,12 @@ using std::map;
 using std::vector;
 using std::set;
 
+struct UserStatus{
+    int account;
+    string username;
+    string login_time;
+};
+
 class User{
     // 这个类储存一个用户的信息
 public:
@@ -38,6 +44,7 @@ public:
     bool operator<(const User&) const;
     bool isValid() const;
     string getUsername() const;
+    string getLoginTime() const;
     void setUsername(string username);
     int getAccount() const;
     void active();  // 激活用户
@@ -50,6 +57,7 @@ public:
     void freeUser(const User&);               // 一个用户离线
     void freeCid(int cid);                    // 一个tcp连接断开，对应的用户释放
     int getUserCid(int id);
+    const User* getCidUser(int cid); 
     void setDatabase(const char* path);
     UserDBManager db_manager;
 private:
