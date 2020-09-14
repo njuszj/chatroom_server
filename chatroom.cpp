@@ -23,6 +23,14 @@ void Chatroom::setDatabase(const char* path){
     user_manager.setDatabase(path);
 }
 
+void Chatroom::queryProcess(const char* buff, int cid){
+    // 查询反馈模块
+    if(strncmp(buff, "query@status", 12) == 0){
+        // 查询登录状态等
+        m_query_status(cid);
+    }
+}
+
 void Chatroom::cmdProcess(const char* buff, int cid){
     // 命令处理模块
     if(strncmp(buff, "cmd@login", 9) == 0){
@@ -166,6 +174,10 @@ void Chatroom::m_register(int cid){
         return;
     }
     return;
+}
+
+void Chatroom::m_query_status(int cid){
+    
 }
 
 void Chatroom::broadcast(string message, int exclude){

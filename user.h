@@ -3,6 +3,7 @@
 # ifndef USER_H
 # define USER_H
 # include "environment.h"
+# include "utilities.h"
 # include "db.h"
 # include <map>
 # include <vector>
@@ -17,14 +18,19 @@ using std::set;
 class User{
     // 这个类储存一个用户的信息
 public:
-    User():account(0), username(""){};
-    User(const User&);
-    User(int ac):account(ac){};
+    User():account(0), username(""){
+        login_time = currTime();
+    };
+    User(const User&){};
+    User(int ac):account(ac){
+        login_time = currTime();
+    };
     ~User(){};
 private:
-    int account;     // 帐号
-    string username; // 昵称
-    bool valid;      // 是否是有效用户
+    int account;        // 帐号
+    string login_time;  // 登录时间
+    string username;    // 用户名
+    bool valid;         // 是否是有效用户
 public:
     User& operator=(const User&);
     bool operator==(const User&);

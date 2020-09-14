@@ -29,11 +29,12 @@ public:
     void sendMessage(int cid, string message);       // 向一个特定的tcp连接写入消息
     void sendMessageToUser(int , string); // 向一个注册的用户发送消息
     void cmdProcess(const char*, int);  // 命令处理模块
-    // void queryProcess(const char*, int); // 查询处理模块
+    void queryProcess(const char*, int); // 查询处理模块
     void setDatabase(const char* path);      // 设置数据库
 private:
     void m_login(int cid);    // 用户登录
     void m_register(int cid); // 用户注册
+    void m_query_status(int cid);  // 查询用户信息
     int m_getUserCid(int id); // 获取用户的TCP连接号
     TcpServer tcp_manager;
     UserManager user_manager; 

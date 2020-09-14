@@ -63,6 +63,8 @@ void UserManager::addUser(int account, int cid){
         delete user;
         return;
     }
+    user->setUsername(db_manager.getUserName(account));
+    user->active();
     active_users.insert(*user);
     cid_to_user[cid] = account;
     user_to_cid[account] = cid;
