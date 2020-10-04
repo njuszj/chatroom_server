@@ -29,6 +29,10 @@ void Chatroom::queryProcess(const char* buff, int cid){
         // 查询登录状态等
         m_query_status(cid);
     }
+    else if(strncmp(buff, "query@groups", 19) == 0){
+        // 查询现有群组
+        m_query_groups(cid);
+    }
 }
 
 void Chatroom::cmdProcess(const char* buff, int cid){
