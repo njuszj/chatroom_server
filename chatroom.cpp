@@ -93,3 +93,12 @@ void Chatroom::sendMessage(int cid, string message){
     else
         logger.ERROR("发送错误!");
 }
+
+void Chatroom::freeIndexs(int index){
+    // 释放一个index
+    connects[index] = 0;
+    tids[index] = 0;
+    if(active_indexs.find(index) != active_indexs.end())
+        active_indexs.erase(index);  // 从活跃集合中移除
+    free_indexs.push(index);  // 放回可用栈中
+}

@@ -2,10 +2,9 @@ logger_test:
 	g++ demo.cpp log_sys.cpp utilities.cpp
 	./a.out
 demo_test:
-	g++ demo.cpp chatroom.cpp tcp_services.cpp log_sys.cpp utilities.cpp \
+	g++ -static demo.cpp chatroom.cpp tcp_services.cpp log_sys.cpp utilities.cpp \
 		-pthread \
-		-o demo -D DEMO_TEST_ON
-	./demo
+		-o server_app.sh
 demo_debug:
 	g++ -g demo.cpp chatroom.cpp tcp_services.cpp db.cpp user.cpp log_sys.cpp utilities.cpp -pthread -lsqlite3 -o demo
 	gdb demo
