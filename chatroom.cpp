@@ -6,9 +6,9 @@ ProcessArg::ProcessArg(int cid, int index, Chatroom* ct){
     this->cid = cid;
 }
 
-Chatroom::Chatroom(){
+Chatroom::Chatroom(int port){
     // 默认构造函数
-    socket_id = tcp_manager.createSocket();
+    socket_id = tcp_manager.createSocket(port);
     for(int i=99; i>=0; i--){
         // 初始化空闲栈
         free_indexs.push(i);

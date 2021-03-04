@@ -17,7 +17,7 @@ private:
     struct sockaddr_in server_addr;  // 表征服务端信息的结构体
 public:
     TcpServer();
-    int createSocket();
+    int createSocket(int port);
 };
 
 # endif

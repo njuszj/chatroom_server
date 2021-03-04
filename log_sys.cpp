@@ -3,9 +3,12 @@
 Logger logger;   // 全局变量应该定义在这里而不是头文件
 
 Logger::Logger(){
-    // 默认构造函数
-    this->target = terminal;
+    // 默认构造函数, 特化版本
+    this->target = file_and_terminal;
     this->level = debug;
+    this->path = "./data";
+    this->outfile.open(path, ios::out | ios::app);   // 打开输出文件
+    this->outfile << currTime() + ": 开始记录\n";
     cout << "[WELCOME] " << __FILE__ << " " << currTime() << " : " << "=== Start logging ===" << endl;
 }
 

@@ -6,7 +6,7 @@
 using namespace std;
 
 void demo_test(){
-    Chatroom ct;
+    Chatroom ct(9999);
     ct.startListen();
 }
 

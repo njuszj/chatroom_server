@@ -20,7 +20,7 @@ extern Logger logger;
 class Chatroom{
     // 聊天室服务端主体
 public:
-    Chatroom(); // 构造函数
+    Chatroom(int port); // 构造函数
     ~Chatroom();// 析构函数
     void startListen();//开始监听端口接受请求
     void freeIndexs(int index);  // 释放一个资源

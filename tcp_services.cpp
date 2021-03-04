@@ -2,16 +2,17 @@
 
 
 TcpServer::TcpServer(){
+    
+}
+
+
+int TcpServer::createSocket(int port){
+    // 创建一个socket连接，然后返回socket的标识符
     // 构造函数, 初始化结构体
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_addr.s_addr = INADDR_ANY;  // 地址
     server_addr.sin_family = AF_INET;       // 协议族
-    server_addr.sin_port = htons(PORT);    // 端口号
-}
-
-
-int TcpServer::createSocket(){
-    // 创建一个socket连接，然后返回socket的标识符
+    server_addr.sin_port = htons(port);    // 端口号
     socket_id = socket(AF_INET, SOCK_STREAM, 0);  // 建立socket
     if(socket_id == -1){
         logger.ERROR("Failed to create TCP socket!");

@@ -1,0 +1,6 @@
+开始记录
+[ERROR]   log_sys.cpp: output  2021-03-04 21:34:34 : Failed to bind address and port with the socket!
+[ERROR]   log_sys.cpp: output  2021-03-04 21:34:34 : Failed to listen port! 
+2021-03-04 21:45:18: 开始记录
+[ERROR]   log_sys.cpp: output  2021-03-04 21:45:18 : Failed to bind address and port with the socket!
+[ERROR]   log_sys.cpp: output  2021-03-04 21:45:18 : Failed to listen port! 
