@@ -19,35 +19,6 @@ Chatroom::~Chatroom(){
 
 }
 
-void Chatroom::setDatabase(const char* path){
-    user_manager.setDatabase(path);
-}
-
-void Chatroom::queryProcess(const char* buff, int cid){
-    // 查询反馈模块
-    if(strncmp(buff, "query@status", 12) == 0){
-        // 查询登录状态等
-        m_query_status(cid);
-    }
-    else if(strncmp(buff, "query@groups", 19) == 0){
-        // 查询现有群组
-        m_query_groups(cid);
-    }
-}
-
-void Chatroom::cmdProcess(const char* buff, int cid){
-    // 命令处理模块
-    if(strncmp(buff, "cmd@login", 9) == 0){
-        // 进入用户登录模块
-        m_login(cid);
-    }
-    else if(strncmp(buff, "cmd@register", 12) == 0){
-        // 进入用户注册模块
-        m_register(cid);
-    }
-    else return;
-}
-
 void* process(void* arg){
     // 处理函数，负责接收每一个客户发来的消息
     pthread_detach(pthread_self());       // 防止线程阻塞
@@ -62,19 +33,10 @@ void* process(void* arg){
         memset(buff, 0, RECV_BUFFSIZE);
         int n = recv(cid, buff, RECV_BUFFSIZE, 0);  // buff会自动添加一个\0结束标志
         logger.INFO(string() + "收到消息: " + buff);
-        if(strncmp(buff, "cmd@", 4) == 0){
-            if(strncmp(buff, "cmd@bye", 7) == 0) break;
-            // 进入命令处理模块
-            else server->cmdProcess(buff, cid);
-        }
-        else if(strncmp(buff, "query@", 6) == 0){
-            server->queryProcess(buff, cid);
-        }
-        else if(n > 0) server->broadcast(buff, cid);
+        if(n > 0) server->broadcast(buff, cid);
         else break;
     }
     close(cid);
-    server->freeIndexs(parg->index);
     logger.INFO(string() + "线程 " + to_string(pthread_self()) + " 已结束");
     pthread_exit(NULL);
     return NULL;
@@ -111,91 +73,6 @@ void Chatroom::startListen(){
     }
 }
 
-void Chatroom::m_login(int cid){
-    // 用户尝试登录
-    // 接收帐号信息
-    char account[SHORT_BUFFSIZE];     // 为帐号创建接收缓冲区
-    char passwd[SHORT_BUFFSIZE];
-    sendMessage(cid, "ACCOUNT: ");
-    memset(account, 0, SHORT_BUFFSIZE);
-    int r1 = recv(cid, account, SHORT_BUFFSIZE, 0);
-    if(r1>=0)
-        logger.INFO(string() + "登录中，收到帐号: " + account);
-    else{
-        logger.INFO("用户帐号接收错误");
-    }
-    sendMessage(cid, "PASSWORD: ");
-    memset(passwd, 0, SHORT_BUFFSIZE);
-    int r2 = recv(cid, passwd, SHORT_BUFFSIZE, 0);
-    if(r2>=0)
-        logger.INFO(string()+"收到用户发来的密码");
-    else{
-        logger.INFO("用户密码接收错误");
-    }
-
-    int digital_account = atoi(account);
-    if(user_manager.verify(digital_account, passwd)){
-        logger.INFO(string()+"用户成功登录");
-        sendMessage(cid, "Welcome to chatroom!\n");
-        this->user_manager.addUser(digital_account, cid);
-        return;
-    }
-    else{
-        sendMessage(cid, "ERROR LOGIN");
-        logger.INFO(string()+"用户登录失败");
-        return;
-    }
-}
-
-void Chatroom::m_register(int cid){
-    // 用户尝试注册
-    // 接收帐号信息
-    char passwd[SHORT_BUFFSIZE];
-    char username[SHORT_BUFFSIZE];
-    int account = user_manager.db_manager.getMinUseableAccount();
-    sendMessage(cid, string() + "Your account is " + to_string(account) + "\n");
-    sendMessage(cid, "Please set username for your account: \n");
-    memset(username, 0, SHORT_BUFFSIZE);
-    int r1 = recv(cid, username, SHORT_BUFFSIZE, 0);
-    if(r1 < 0){
-        sendMessage(cid, "Receive username error. \n");
-        return;
-    }
-    sendMessage(cid, "Please set password for your account: \n");
-    memset(passwd, 0, SHORT_BUFFSIZE);
-    int r2 = recv(cid, passwd, SHORT_BUFFSIZE, 0);
-    if(r2 >= 0){
-        int r = user_manager.db_manager.insertUser(account, username, passwd);
-        if(r){
-            sendMessage(cid, "Successfully register! Login now... ...\n");
-            this->user_manager.addUser(account, cid);
-            sendMessage(cid, "Login successfully. \n");
-            return;
-        }
-        else {
-            sendMessage(cid, "Failed to register. \n");
-        }
-    }
-    else{
-        sendMessage(cid, "Receive passwd error. \n");
-        return;
-    }
-    return;
-}
-
-void Chatroom::m_query_status(int cid){
-    const User* user = user_manager.getCidUser(cid);
-    if(user == NULL){
-        sendMessage(cid, string()+"You are offline, please login first. \n");
-        return;
-    }
-    sendMessage(cid, string()+"-----------------------------------------------------\n");
-    sendMessage(cid, string()+"---------- account: "+to_string(user->getAccount())+"\n");
-    sendMessage(cid, string()+"---------- username: "+user->getUsername()+"\n");
-    sendMessage(cid, string()+"---------- login_time: "+user->getLoginTime()+"\n");
-    sendMessage(cid, string()+"-----------------------------------------------------\n");
-}
-
 void Chatroom::broadcast(string message, int exclude){
     // 向所有TCP连接广播一条消息，除了exclude
     set<int>::iterator itor = active_indexs.begin();
@@ -215,23 +92,4 @@ void Chatroom::sendMessage(int cid, string message){
        logger.INFO(string()+"向 "+to_string(cid)+" 发了一条消息: "+message);
     else
         logger.ERROR("发送错误!");
-}
-
-void Chatroom::freeIndexs(int index){
-    // 释放一个index
-    user_manager.freeCid(connects[index]);
-    connects[index] = 0;
-    tids[index] = 0;
-    if(active_indexs.find(index) != active_indexs.end())
-        active_indexs.erase(index);  // 从活跃集合中移除
-    free_indexs.push(index);  // 放回可用栈中
-}
-
-void Chatroom::sendMessageToUser(int id, string message){
-    int cid = m_getUserCid(id);
-    sendMessage(cid, message);
-}
-
-int Chatroom::m_getUserCid(int id){
-    return user_manager.getUserCid(id);
 }

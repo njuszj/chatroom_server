@@ -26,3 +26,7 @@
 
 ### 2020-09-12 星期六
 + 注意从客户端发来的消息可能含有"\n\r"等后缀，会影响判断
+
+
+### 2021-02-04 Thu
++ I add a new branch named "docker", which is made for docker. It's more simple than master branch
