@@ -10,6 +10,11 @@ void demo_test(){
     ct.startListen();
 }
 
+void logger_test(){
+    Logger logger;
+    logger.DEBUG("WHY?");
+}
+
 int main(){
     demo_test();
 }

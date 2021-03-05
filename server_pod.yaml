@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: server_pod
+  labels: 
+    name: server_app
+  spec:
+    containers:
+    - name: server_pod
+      image: server_app:lastest
+      ports:
+      - containerPort: 9999

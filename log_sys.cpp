@@ -1,14 +1,10 @@
 # include "log_sys.h"
 
-Logger logger;   // 全局变量应该定义在这里而不是头文件
+Logger logger(Logger::file_and_terminal, Logger::debug, "./data");   // 全局变量应该定义在这里而不是头文件
 
 Logger::Logger(){
-    // 默认构造函数, 特化版本
-    this->target = file_and_terminal;
+    this->target = terminal;
     this->level = debug;
-    this->path = "./data";
-    this->outfile.open(path, ios::out | ios::app);   // 打开输出文件
-    this->outfile << currTime() + ": 开始记录\n";
     cout << "[WELCOME] " << __FILE__ << " " << currTime() << " : " << "=== Start logging ===" << endl;
 }
 
@@ -21,6 +17,7 @@ Logger::Logger(log_target target, log_level level, string path){
         if (target != terminal){
             this->outfile.open(path, ios::out | ios::app);   // 打开输出文件
             this->outfile << welcome_dialog;
+            this->outfile.close();
         }
         if (target != file){
             // 如果日志对象不是仅文件
@@ -52,8 +49,11 @@ void Logger::output(string text, log_level act_level){
         // 当前等级设定的等级才会显示在终端，且不能是只文件模式
         cout << output_content;
     }
-    if(this->target != terminal)
+    if(this->target != terminal){
+        this->outfile.open(path, ios::out | ios::app);
         outfile << output_content;
+        this->outfile.close();
+    }
 }
 
 
