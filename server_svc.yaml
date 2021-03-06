@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysvc
+spec:
+  type: NodePort
+  ports:
+    - port: 9999
+      name: communication
+      nodePort: 30001
+      targetPort: 9999
+    - port: 22
+      name: ssh
+      nodePort: 30002
+      targetPort: 22
+  selector:
+    app: server_deployment
