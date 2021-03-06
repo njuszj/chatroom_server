@@ -12,9 +12,15 @@ spec:
       labels: 
         app: server-deployment
     spec:
+      volumes:
+      - name: shared-data
+        emptyDir: {}
       containers:
       - name: server-container
         image: "server_app:lastest"
+        volumeMounts:
+        - name: shared-data
+          mountPath: /usr/share/server/
         ports:
         - name: listen-port
           containerPort: 9999
