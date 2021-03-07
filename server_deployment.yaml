@@ -12,7 +12,7 @@ spec:
       labels: 
         app: server-deployment
     spec:
-      restartPolicy: Never
+      # restartPolicy: Never
       volumes:
       - name: shared-data
         emptyDir: {}
