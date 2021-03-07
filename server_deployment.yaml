@@ -12,15 +12,17 @@ spec:
       labels: 
         app: server-deployment
     spec:
+      restartPolicy: Never
       volumes:
       - name: shared-data
         emptyDir: {}
       containers:
       - name: server-container
         image: "server_app:lastest"
+        imagePullPolicy: Never
         volumeMounts:
         - name: shared-data
-          mountPath: /usr/share/server/
+          mountPath: /var/log/server_log/
         ports:
         - name: listen-port
           containerPort: 9999
@@ -28,3 +30,13 @@ spec:
         - name: ssh-port
           containerPort: 22
           hostPort: 15000
+      - name: sshd-container
+        image: "sshd:lastest"
+        imagePullPolicy: Never
+        volumeMounts:
+        - name: shared-data
+          mountPath: /var/log/server_log/
+        ports:
+        - name: ssh-port
+          containerPort: 22
+          hostPort: 15001
