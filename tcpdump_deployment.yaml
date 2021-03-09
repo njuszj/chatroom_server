@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tcpdump-deployment
+spec:
+  selector:
+    matchLabels:
+      app: tcpdump-deployment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tcpdump-deployment
+    spec:
+      containers:
+      - name: tcpdump-container
+        image: "tcpdump:lastest"
+        imagePullPolicy: Never
+        command: ["tcpdump"]
+        ports:
+        - name: ssh-port
+          containerPort: 22

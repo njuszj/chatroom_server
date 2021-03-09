@@ -26,10 +26,7 @@ spec:
         ports:
         - name: listen-port
           containerPort: 9999
-          hostPort: 9999
-        - name: ssh-port
-          containerPort: 22
-          hostPort: 15000
+          # hostPort: 9999
       - name: sshd-container
         image: "sshd:lastest"
         imagePullPolicy: Never
@@ -39,4 +36,4 @@ spec:
         ports:
         - name: ssh-port
           containerPort: 22
-          hostPort: 15001
+          # hostPort: 15001
