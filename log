@@ -3,4 +3,4 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
 # Service nodePort是真实节点，但是应该访问port
 # 调度器控制器状态unhealthy, 需要改配置文件，去除--port=0 
 # 获取pod ip地址用 kubectl describe pod --name
-# 进入pod用kubectl exec --pod -c --container-name /bin/bash
+# 进入pod用kubectl exec -ti --pod -c --container-name /bin/bash
