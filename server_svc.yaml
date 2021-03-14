@@ -14,4 +14,4 @@ spec:
       nodePort: 30002
       targetPort: 22
   selector:
-    app: server_deployment
+    app: server-deployment
